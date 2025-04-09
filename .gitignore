@@ -1,0 +1,7 @@
+
+#env and node modules excluded
+.env
+node_modules/
+
+#IDE files
+.vscode/
