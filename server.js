@@ -4,6 +4,8 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const app = express();
+const { restClient } = require('@polygon.io/client-js'); //Connects to Polygon
+const rest = restClient(process.env.POLYGON_API_KEY);
 
 const MongoClient = require('mongodb').MongoClient;
 const url = process.env.MONGO_URL;
@@ -40,7 +42,7 @@ app.post('/api/signup', async (req, res, next) => {
     const { username, password } = req.body;
     const hashedPassword = await bcrypt.hash(password, saltRounds);
     const newUser = { Username: username, Password: hashedPassword, favorites: [] }; //Initializes empty array for favorites
-    var error = '';
+    let error = '';
 
     try {
         await db.collection('Users').insertOne(newUser);
@@ -55,7 +57,7 @@ app.post('/api/signup', async (req, res, next) => {
         }
     }
 
-    var ret = { error: error };
+    let ret = { error: error };
     res.status(200).json(ret);
 });
 
@@ -64,8 +66,8 @@ app.post('/api/login', async (req, res, next) => {
     // outgoing: username (to display on next screen), error
 
     const {username, password} = req.body;
-    var error = '';
-    var ret = { username: '', error: '' }; //Defining here so that username isnt null if it doesnt exist
+    let error = '';
+    let ret = { username: '', error: '' }; //Defining here so that username isnt null if it doesnt exist
 
     try {
         const user = await db.collection("Users").findOne({ Username: username }); //Checks to see if user is in database
@@ -87,10 +89,29 @@ app.post('/api/login', async (req, res, next) => {
         error = e.toString();
     }
     
-    ret.error = error;
+    ret.error = error; //Sets error to be returned
     res.status(200).json(ret);
 });
 
+app.get('/api/news', async (req, res, next) => { //Endpoint used to fetch news articles
+    //outgoing: news array, error
+    
+    let error = '';
+    let news = [];
+    
+    try {
+        news = await rest.reference.tickerNews({
+            order: "asc",
+            limit: 10, //Can modify if needed (limit is 1000)
+            sort: "published_utc"
+        });
+    }
+    catch(e) {
+        error = e.toString();
+    }
 
+    let ret = { news: news, error: error };
+    res.status(200).json(ret);
+});
 
 app.listen(5001); // start Node + Express server on
