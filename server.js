@@ -50,7 +50,7 @@ app.post('/api/signup', async (req, res, next) => {
     }
     catch (e) {
         if (e.code === 11000) {
-            error = 'Username taken. Please try again';
+            error = 'Username taken, Please try again.';
         }
         else {
             error = e.toString();
@@ -74,11 +74,11 @@ app.post('/api/login', async (req, res, next) => {
         if(user) {
             const isMatch = await bcrypt.compare(password, user.Password); //Checks password
             if(isMatch) {
-                error = 'Login Success';
+                error = 'Login Success!';
                 ret.username = user.Username;
             }
             else { //Jumps here if password doesnt exist
-                error = 'Invalid Password';
+                error = 'Invalid Password.';
             }
         }
         else { //Jumps here if username doesnt exist
