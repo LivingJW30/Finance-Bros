@@ -199,7 +199,7 @@ app.get('/api/ticker-overview', async (req, res, next) => { //Returns the ticker
     let error = '';
 
     try { //Storing all ticker data for now, can modify later
-        const tickerData = await rest.reference.tickerDetails( 
+        results = await rest.reference.tickerDetails( 
             ticker
         );
     }
