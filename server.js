@@ -35,7 +35,7 @@ app.use((req, res, next) =>
     next();
 });
 
-app.post('/api/signup', async (req, res, next) => {
+app.post('/api/signup', async (req, res, next) => { //Signup Endpoint
     //incoming: Username, Password (hashed)
     //outgoing: error
 
@@ -61,13 +61,13 @@ app.post('/api/signup', async (req, res, next) => {
     res.status(200).json(ret);
 });
 
-app.post('/api/login', async (req, res, next) => {
+app.post('/api/login', async (req, res, next) => { //Login Endpoint
     // incoming: username, password
     // outgoing: username (to display on next screen), error
 
     const {username, password} = req.body;
-    let error = '';
     let ret = { username: '', error: '' }; //Defining here so that username isnt null if it doesnt exist
+    let error = '';
 
     try {
         const user = await db.collection("Users").findOne({ Username: username }); //Checks to see if user is in database
@@ -96,8 +96,8 @@ app.post('/api/login', async (req, res, next) => {
 app.get('/api/news', async (req, res, next) => { //Endpoint used to fetch news articles
     //outgoing: news array, error
     
-    let error = '';
     let news = [];
+    let error = '';
     
     try {
         news = await rest.reference.tickerNews({
@@ -114,13 +114,13 @@ app.get('/api/news', async (req, res, next) => { //Endpoint used to fetch news a
     res.status(200).json(ret);
 });
 
-app.get('/api/search', async (req, res, next) => {
+app.get('/api/search', async (req, res, next) => { //Searches Tickers from All Tickers
     //incoming: search query
     //outgoing: results, error
 
     const { query } = req.query;
-    let error = '';
     let results = [];
+    let error = '';
     
     try {
         // Make API call to Polygon.io to search for tickers
@@ -147,13 +147,13 @@ app.get('/api/search', async (req, res, next) => {
     res.status(200).json(ret);
 });
 
-app.get('/api/stockchart', async (req, res, next) => {
+app.get('/api/stockchart', async (req, res, next) => { //Retrieve Stock Chart info from Custom Bars
     // incoming: ticker symbol, timeframe
     // outgoing: chart data (timestamps and closing prices), error
 
     const { ticker, days = 7 } = req.query; // Default to 7 days if not specified
-    let error = '';
     let chartData = [];
+    let error = '';
     
     // Calculate date range (today minus specified days)
     const toDate = new Date();
@@ -190,16 +190,16 @@ app.get('/api/stockchart', async (req, res, next) => {
     res.status(200).json(ret);
 });
 
-app.get('/api/get-ticker-info', async (req, res, next) => {
+app.get('/api/ticker-overview', async (req, res, next) => { //Returns the ticker information from Ticker Overview
     //incoming: ticker name
     //outgoing: results, error
 
-    const { ticker } = req.body;
-    let error = '';
+    const { ticker } = req.query;
     let results = [];
+    let error = '';
 
     try { //Storing all ticker data for now, can modify later
-        results = await rest.reference.tickerDetails(
+        const tickerData = await rest.reference.tickerDetails( 
             ticker
         );
     }
@@ -211,16 +211,16 @@ app.get('/api/get-ticker-info', async (req, res, next) => {
     res.status(200).json(ret);
 });
 
-app.post('/api/add-favorite', async (req, res, next) => {
+app.post('/api/add-favorite', async (req, res, next) => { //Adds a ticker into favorites array in a specified user
     //incoming: ticker name, username
     //outgoing: error
 
     const { ticker, username } = req.body;
-    const user = await db.collection('Users').findOne({ Username: username });
+    const user = await db.collection('Users').findOne({ Username: username }); //Gets the username from the database
     let error = '';
 
     try {
-        if (user && user.favorites.includes(ticker)) {
+        if (user && user.favorites.includes(ticker)) { 
             error = 'Ticker already exists in your favorites';
         }
         else {
@@ -236,6 +236,55 @@ app.post('/api/add-favorite', async (req, res, next) => {
     }
 
     let ret = { error: error };
+    res.status(200).json(ret);
+});
+
+app.post('/api/remove-favorite', async (req, res, next) => { //Removes a ticker from favorites array in a specified user
+    //incoming: ticker name, username
+    //outgoing: error
+
+    const { ticker, username } = req.body;
+    const user = await db.collection('Users').findOne({ Username: username }); //Gets the username from the database
+    let error = '';
+
+    try {
+        if (user && user.favorites.includes(ticker)) {
+            await db.collection('Users').updateOne(
+                { Username: username },
+                { $pull: { favorites: ticker } } 
+            );
+            error = 'Ticker Removed!';
+        }
+        else {
+            error = 'Ticker does not exists in your favorites';
+        }
+    }
+    catch(e) {
+
+    }
+
+    let ret = { error: error };
+    res.status(200).json(ret);
+});
+
+app.get('/api/ticker-snapshot', async (req, res, next) => {
+    //incoming: ticker name
+    //outgoing: results, error
+
+    const { ticker } = req.body;
+    let results = [];
+    let error = '';
+
+    try { //Storing all ticker data for now, can modify later
+        results = await rest.stocks.snapshotTicker(
+            ticker
+        );
+    }
+    catch(e) {
+        error = e.toString();
+    }
+
+    let ret = { results: results, error: error };
     res.status(200).json(ret);
 });
 
