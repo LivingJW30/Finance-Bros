@@ -114,4 +114,80 @@ app.get('/api/news', async (req, res, next) => { //Endpoint used to fetch news a
     res.status(200).json(ret);
 });
 
+app.get('/api/search', async (req, res, next) => {
+    //incoming: search query
+    //outgoing: results, error
+
+    const { query } = req.query;
+    let error = '';
+    let results = [];
+    
+    try {
+        // Make API call to Polygon.io to search for tickers
+        const searchResults = await rest.reference.tickers({
+            search: query,
+            active: true,
+            limit: 10,
+            sort: 'ticker'
+        });
+        
+        // Extract only ticker and name from the results
+        if (searchResults && searchResults.results) {
+            results = searchResults.results.map(ticker => ({
+                ticker: ticker.ticker,
+                name: ticker.name
+            }));
+        }
+    }
+    catch(e) {
+        error = e.toString();
+    }
+
+    let ret = { results: results, error: error };
+    res.status(200).json(ret);
+});
+
+app.get('/api/stockchart', async (req, res, next) => {
+    // incoming: ticker symbol, timeframe
+    // outgoing: chart data (timestamps and closing prices), error
+
+    const { ticker, days = 7 } = req.query; // Default to 7 days if not specified
+    let error = '';
+    let chartData = [];
+    
+    // Calculate date range (today minus specified days)
+    const toDate = new Date();
+    const fromDate = new Date();
+    fromDate.setDate(toDate.getDate() - days);
+    
+    // Format dates as YYYY-MM-DD for API
+    const fromStr = fromDate.toISOString().split('T')[0];
+    const toStr = toDate.toISOString().split('T')[0];
+
+    try {
+        // Make API call to Polygon.io to get aggregated price data
+        const priceData = await rest.stocks.aggregates(
+            ticker, 
+            1,              // multiplier
+            'day',          // timespan
+            fromStr,        // from date
+            toStr           // to date
+        );
+        
+        // Extract just the closing prices and timestamps
+        if (priceData && priceData.results) {
+            chartData = priceData.results.map(day => ({
+                price: day.c,  // closing price
+                timestamp: day.t  // timestamp
+            }));
+        }
+    }
+    catch(e) {
+        error = e.toString();
+    }
+
+    let ret = { chartData: chartData, error: error };
+    res.status(200).json(ret);
+});
+
 app.listen(5001); // start Node + Express server on
