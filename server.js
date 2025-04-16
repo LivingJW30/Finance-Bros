@@ -190,4 +190,53 @@ app.get('/api/stockchart', async (req, res, next) => {
     res.status(200).json(ret);
 });
 
+app.get('/api/get-ticker-info', async (req, res, next) => {
+    //incoming: ticker name
+    //outgoing: results, error
+
+    const { ticker } = req.body;
+    let error = '';
+    let results = [];
+
+    try { //Storing all ticker data for now, can modify later
+        results = await rest.reference.tickerDetails(
+            ticker
+        );
+    }
+    catch(e) {
+        error = e.toString();
+    }
+
+    let ret = { results: results, error: error };
+    res.status(200).json(ret);
+});
+
+app.post('/api/add-favorite', async (req, res, next) => {
+    //incoming: ticker name, username
+    //outgoing: error
+
+    const { ticker, username } = req.body;
+    const user = await db.collection('Users').findOne({ Username: username });
+    let error = '';
+
+    try {
+        if (user && user.favorites.includes(ticker)) {
+            error = 'Ticker already exists in your favorites';
+        }
+        else {
+            await db.collection('Users').updateOne(
+                { Username: username },
+                { $addToSet: { favorites: ticker } } //This will still prevent duplicates regardless
+            );
+            error = 'Ticker Added!';
+        }
+    }
+    catch(e) {
+        error = e.toString();
+    }
+
+    let ret = { error: error };
+    res.status(200).json(ret);
+});
+
 app.listen(5001); // start Node + Express server on
