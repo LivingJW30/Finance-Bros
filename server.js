@@ -190,9 +190,62 @@ app.get('/api/stockchart', async (req, res, next) => { //Retrieve Stock Chart in
     res.status(200).json(ret);
 });
 
-app.get('/api/ticker-overview', async (req, res, next) => { //Returns the ticker information from Ticker Overview
+app.get('/api/ticker-overview', async (req, res, next) => {
+    //incoming: "ticker:"
+    //outgoing: error || results[]
+
+    const ticker = req.query.ticker || (req.body && req.body.ticker);
+    
+    if (!ticker) {
+        return res.status(400).json({
+            success: false,
+            error: 'Ticker symbol is required'
+        });
+    }
+    
+    try {
+        const polygonResponse = await rest.reference.tickerDetails(ticker);
+        
+        const simplifiedData = {
+            symbol: polygonResponse.results.ticker,
+            company: {
+                name: polygonResponse.results.name,
+                description: polygonResponse.results.description,
+                industry: polygonResponse.results.sic_description,
+                employees: polygonResponse.results.total_employees,
+                founded: polygonResponse.results.list_date //ipo date
+            },
+            contact: {
+                website: polygonResponse.results.homepage_url,
+                phone: polygonResponse.results.phone_number,
+                address: polygonResponse.results.address
+            },
+            financials: {
+                marketCap: polygonResponse.results.market_cap,
+                currency: polygonResponse.results.currency_name,
+                outstandingShares: polygonResponse.results.weighted_shares_outstanding
+            },
+            branding: {
+                logo: polygonResponse.results.branding?.logo_url,
+                icon: polygonResponse.results.branding?.icon_url
+            }
+        };
+        
+        res.status(200).json({
+            success: true,
+            data: simplifiedData
+        });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            error: error.message || 'Failed to fetch ticker overview'
+        });
+    }
+});
+
+/*app.get('/api/ticker-overview', async (req, res, next) => { //Returns the ticker information from Ticker Overview
     //incoming: ticker name
-    //outgoing: results, error
+    //outgoing: results[] || error
 
     const { ticker } = req.query;
     let results = [];
@@ -209,7 +262,7 @@ app.get('/api/ticker-overview', async (req, res, next) => { //Returns the ticker
 
     let ret = { results: results, error: error };
     res.status(200).json(ret);
-});
+});*/
 
 app.post('/api/add-favorite', async (req, res, next) => { //Adds a ticker into favorites array in a specified user
     //incoming: ticker name, username
@@ -268,6 +321,50 @@ app.post('/api/remove-favorite', async (req, res, next) => { //Removes a ticker 
 });
 
 app.get('/api/ticker-snapshot', async (req, res, next) => {
+    //incoming: "ticker"
+    //outgoing: data[]
+    const ticker = req.query.ticker || req.body.ticker;
+    
+    if (!ticker) {
+        return res.status(400).json({ error: 'Ticker symbol is required' });
+    }
+    
+    try {
+        // Get raw data from Polygon
+        const polygonResponse = await rest.stocks.snapshotTicker(ticker);
+        
+        // Transform into simplified format
+        const simplifiedData = {
+            symbol: ticker,
+            price: {
+                current: polygonResponse.ticker?.lastTrade?.p || polygonResponse.ticker?.lastQuote?.p || 0,
+                open: polygonResponse.ticker?.day?.o || 0,
+                high: polygonResponse.ticker?.day?.h || 0,
+                low: polygonResponse.ticker?.day?.l || 0,
+                close: polygonResponse.ticker?.day?.c || 0
+            },
+            volume: polygonResponse.ticker?.day?.v || 0,
+            volumeWeightedAvgPrice: polygonResponse.ticker?.day?.vw || 0,
+            change: {
+                value: polygonResponse.todaysChange || 0,
+                percent: polygonResponse.todaysChangePerc || 0
+            },
+            lastUpdated: new Date(polygonResponse.ticker?.lastTrade?.t || Date.now()).toISOString()
+        };
+        
+        res.status(200).json({
+            success: true,
+            data: simplifiedData
+        });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            error: error.message || 'Failed to fetch ticker data'
+        });
+    }
+});
+
+/*app.get('/api/ticker-snapshot', async (req, res, next) => {
     //incoming: ticker name
     //outgoing: results, error
 
@@ -286,6 +383,6 @@ app.get('/api/ticker-snapshot', async (req, res, next) => {
 
     let ret = { results: results, error: error };
     res.status(200).json(ret);
-});
+});*/
 
 app.listen(5001); // start Node + Express server on
