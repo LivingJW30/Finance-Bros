@@ -230,6 +230,8 @@ app.get('/api/ticker-overview', async (req, res, next) => {
                 icon: polygonResponse.results.branding?.icon_url
             }
         };
+
+        await db.collection('Tickers').insertOne(simplifiedData);
         
         res.status(200).json({
             success: true,
