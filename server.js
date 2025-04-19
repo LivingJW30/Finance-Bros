@@ -353,6 +353,8 @@ app.get('/api/ticker-snapshot', async (req, res, next) => {
             lastUpdated: new Date(polygonResponse.ticker?.lastTrade?.t || Date.now()).toISOString()
         };
 
+        await db.collection('Tickers').insertOne(simplifiedData); // Store the simplified data in MongoDB
+
         res.status(200).json({
             success: true,
             data: simplifiedData
