@@ -190,10 +190,10 @@ app.get('/api/stockchart', async (req, res, next) => { //Retrieve Stock Chart in
 });
 
 app.get('/api/ticker-overview', async (req, res, next) => {
-    //incoming: "ticker:"
+    //incoming: "ticker:", username
     //outgoing: error || results[]
 
-    const ticker = req.query.ticker || (req.body && req.body.ticker);
+    const { ticker, username } = req.query; // Get ticker and username from query parameters
 
     if (!ticker) {
         return res.status(400).json({
@@ -230,7 +230,11 @@ app.get('/api/ticker-overview', async (req, res, next) => {
             }
         };
 
-        await db.collection('Tickers').insertOne(simplifiedData);
+        const checkExistance = await db.collection("Users").findOne({ Username: username, favorites: ticker }); //Checks to see if ticker is in users
+
+        if(!checkExistance) {
+            await db.collection('Tickers').insertOne(simplifiedData);
+        }
 
         res.status(200).json({
             success: true,
@@ -314,7 +318,7 @@ app.post('/api/remove-favorite', async (req, res, next) => { //Removes a ticker 
         }
     }
     catch (e) {
-
+        error = e.toString();
     }
 
     let ret = { error: error };
@@ -352,8 +356,6 @@ app.get('/api/ticker-snapshot', async (req, res, next) => {
             },
             lastUpdated: new Date(polygonResponse.ticker?.lastTrade?.t || Date.now()).toISOString()
         };
-
-        await db.collection('Tickers').insertOne(simplifiedData); // Store the simplified data in MongoDB
 
         res.status(200).json({
             success: true,
