@@ -190,7 +190,7 @@ app.get('/api/stockchart', async (req, res, next) => { //Retrieve Stock Chart in
 });
 
 app.get('/api/ticker-overview', async (req, res, next) => {
-    //incoming: "ticker:", username
+    //incoming: "ticker:"
     //outgoing: error || results[]
 
     const { ticker, username } = req.query; // Get ticker and username from query parameters
@@ -229,12 +229,6 @@ app.get('/api/ticker-overview', async (req, res, next) => {
                 icon: polygonResponse.results.branding?.icon_url
             }
         };
-
-        const checkExistance = await db.collection("Users").findOne({ Username: username, favorites: ticker }); //Checks to see if ticker is in users
-
-        if(!checkExistance) {
-            await db.collection('Tickers').insertOne(simplifiedData);
-        }
 
         res.status(200).json({
             success: true,
