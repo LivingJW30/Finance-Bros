@@ -1,10 +1,36 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../assets/Home.css';
 import logo from '../assets/logo.png';
 
+interface NewsItem {
+    title: string;
+    article_url: string;
+}
+
 function Home() {
     const navigate = useNavigate();
+    const [news, setNews] = useState<NewsItem[]>([]);
+    const [error, setError] = useState('');
+
+    useEffect(() => {
+        const fetchNews = async () => {
+            try {
+                const response = await fetch('/api/news');
+                const data = await response.json();
+                if (data.error) {
+                    setError(data.error);
+                } else {
+                    setNews(data.news.results || []);
+                }
+            } catch (e: any) {
+                setError(e.toString());
+            }
+        };
+
+        fetchNews();
+    }, []);
+
     return (
         <div>
             <div id="mainHeader">
@@ -13,7 +39,30 @@ function Home() {
                     <span className="brand-name">FinanceBros</span>
                 </div>
             </div>
-            
+
+            {/* News Panel Fixed Left */}
+            <div className="news-fixed-left">
+                <h2>Latest News</h2>
+                {error ? (
+                    <p className="error">{error}</p>
+                ) : (
+                    <ul className="news-list">
+                        {news.map((item, index) => (
+                            <li key={index}>
+                                <a
+                                    href={item.article_url}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                >
+                                    {item.title}
+                                </a>
+                            </li>
+                        ))}
+                    </ul>
+                )}
+            </div>
+
+            {/* Centered Home Content */}
             <div id="homeDiv">
                 <h1>Stonks</h1>
                 <div className="button-box">
@@ -26,3 +75,4 @@ function Home() {
 }
 
 export default Home;
+
