@@ -1,19 +1,25 @@
-import { Link } from 'react-router-dom';
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import '../assets/Home.css';
+import logo from '../assets/logo.png';
 
-function Home()
-{
+function Home() {
+    const navigate = useNavigate();
     return (
-        <div id="homeDiv" style={{ textAlign: 'center', marginTop: '4rem' }}>
-            <h1>Finance-Bros</h1>
-            <p>Login or sign up to continue</p>
-
-            <div style={{ marginTop: '2rem' }}>
-                <Link to="/login">
-                    <button style={{ marginRight: '1rem' }}>Login</button>
-                </Link>
-                <Link to="/signup">
-                    <button>Sign Up</button>
-                </Link>
+        <div>
+            <div id="mainHeader">
+                <div className="logo-container">
+                    <img src={logo} alt="FinanceBros Logo" className="logo" />
+                    <span className="brand-name">FinanceBros</span>
+                </div>
+            </div>
+            
+            <div id="homeDiv">
+                <h1>Stonks</h1>
+                <div className="button-box">
+                    <button onClick={() => navigate('/login')}>Login</button>
+                    <button onClick={() => navigate('/signup')}>Sign Up</button>
+                </div>
             </div>
         </div>
     );

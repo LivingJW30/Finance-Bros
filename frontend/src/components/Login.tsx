@@ -1,60 +1,100 @@
 import React, { useState } from 'react';
+import '../assets/Login.css';
+import logo from '../assets/logo.png';
+import homeIcon from '../assets/home-icon.png';
+
 
 function Login()
 {
-    const [message,setMessage] = React.useState('');
-    const [loginName,setLoginName] = React.useState('');
-    const [loginPassword,setPassword] = React.useState('');
+    const [message, setMessage] = useState('');
+    const [username, setUsername] = useState('');
+    const [password, setPassword] = useState('');
+    const [showPassword, setShowPassword] = useState(false); //should allow us to toggle pw veiwing
+    
 
-    async function doLogin(event:any) : Promise<void>
+    async function doLogin(event: React.FormEvent): Promise<void>
     {
         event.preventDefault();
-        var obj = {login:loginName,password:loginPassword};
-        var js = JSON.stringify(obj);
+        const obj = { username: username, password: password };
+        const js = JSON.stringify(obj);
+
         try
         {
-            const response = await fetch('https://mern-lab.ucfknight.site/api/login',{method:'POST',body:js,headers:{'Content-Type':'application/json'}});
-            var res = JSON.parse(await response.text());
-            if( res.id <= 0 )
+            const response = await fetch('/api/login', {
+                method: 'POST',
+                body: js,
+                headers: { 'Content-Type': 'application/json' }
+            });
+
+            const res = await response.json();
+
+            if (res.error === 'Login Success!')
             {
-                setMessage('User/Password combination incorrect');
+                const user = { username: res.username };
+                localStorage.setItem('user_data', JSON.stringify(user));
+                setMessage('');
+                window.location.href = '/Home';
             }
             else
             {
-                var user = {firstName:res.firstName,lastName:res.lastName,id:res.id}
-                localStorage.setItem('user_data', JSON.stringify(user));
-
-                setMessage('');
-                window.location.href = '/home';
+                setMessage(res.error);
             }
         }
-        catch(error:any)
+        catch(error: any)
         {
             alert(error.toString());
-            return;
         }
     };
 
-    function handleSetLoginName( e: any ) : void
-    {
-        setLoginName( e.target.value );
-    }
-    function handleSetPassword( e: any ) : void
-    {
-        setPassword( e.target.value );
-    }
-        
-    return(
-        <div id="loginDiv">
-            <span id="inner-title">PLEASE LOG IN</span><br />
-            <input type="text" id="loginName" placeholder="Username" 
-                onChange={handleSetLoginName} /><br />
-            <input type="password" id="loginPassword" placeholder="Password" 
-                onChange={handleSetPassword} /><br />
-            <input type="submit" id="loginButton" className="buttons" value = "Do It"
-                onClick={doLogin} />
-            <span id="loginResult">{message}</span>
+    return (
+        <div>
+            <header id="mainHeader">
+                <a href="/" className="home-button">
+                    <img src={homeIcon} alt="Home" />
+                </a>
+
+                <div className="logo-container">
+                    <img src={logo} alt="FinanceBros Logo" className="logo" />
+                    <span className="brand-name">FinanceBros</span>
+                </div>
+            </header>
+
+            <div id="loginDiv">
+                <div className="button-box">
+                    <h1>Login</h1>
+                    <form onSubmit={doLogin}>
+                        <input
+                            type="text"
+                            placeholder="Username"
+                            value={username}
+                            onChange={(e) => setUsername(e.target.value)}
+                            required
+                        /><br /><br />
+
+                        <input
+                            type={showPassword ? "text" : "password"}
+                            placeholder="Password"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            required
+                        /><br /><br />
+
+                       <label>
+                            <input
+                                type="checkbox"
+                                checked={showPassword}
+                                onChange={() => setShowPassword(prev => !prev)}
+                            /> Show Password
+                        </label><br /><br />
+
+                        <button type="submit">Login</button>
+                    </form>
+
+                    {message && <p style={{ marginTop: '1rem', color: '#8AFF90' }}>{message}</p>}
+                </div>
+            </div>
         </div>
     );
 };
+
 export default Login;
