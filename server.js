@@ -193,11 +193,7 @@ app.get('/api/ticker-overview', async (req, res, next) => {
     //incoming: "ticker:"
     //outgoing: error || results[]
 
-<<<<<<< HEAD
     const ticker = req.query.ticker || (req.body && req.body.ticker);
-=======
-    const { ticker, username } = req.query; // Get ticker and username from query parameters
->>>>>>> f0109e3cae96ee4b1540884805651b973578a05f
 
     if (!ticker) {
         return res.status(400).json({
@@ -234,11 +230,8 @@ app.get('/api/ticker-overview', async (req, res, next) => {
             }
         };
 
-<<<<<<< HEAD
         await db.collection('Tickers').insertOne(simplifiedData);
 
-=======
->>>>>>> f0109e3cae96ee4b1540884805651b973578a05f
         res.status(200).json({
             success: true,
             data: simplifiedData
@@ -321,11 +314,6 @@ app.post('/api/remove-favorite', async (req, res, next) => { //Removes a ticker 
         }
     }
     catch (e) {
-<<<<<<< HEAD
-
-=======
-        error = e.toString();
->>>>>>> f0109e3cae96ee4b1540884805651b973578a05f
     }
 
     let ret = { error: error };

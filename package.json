@@ -11,12 +11,17 @@
   "license": "ISC",
   "dependencies": {
     "@polygon.io/client-js": "^7.4.0",
+    "apexcharts": "^4.5.0",
     "bcrypt": "^5.1.1",
     "body-parser": "^2.2.0",
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
     "express": "^5.1.0",
     "mongodb": "^6.15.0",
-    "nodemon": "^3.1.9"
+    "nodemon": "^3.1.9",
+    "react-apexcharts": "^1.7.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.14.1"
   }
 }
