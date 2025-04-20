@@ -230,7 +230,11 @@ app.get('/api/ticker-overview', async (req, res, next) => {
             }
         };
 
-        await db.collection('Tickers').insertOne(simplifiedData);
+        const checkTicker = await db.collection("Tickers").findOne({ symbol: ticker });
+        
+        if(!checkTicker) {
+            await db.collection('Tickers').insertOne(simplifiedData);
+        }
 
         res.status(200).json({
             success: true,
