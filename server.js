@@ -100,10 +100,12 @@ app.get('/api/news', async (req, res, next) => { //Endpoint used to fetch news a
 
     try {
         news = await rest.reference.tickerNews({
-            order: "asc",
-            limit: 10, //Can modify if needed (limit is 1000)
+            order: "desc",
+            limit: 19, //Can modify if needed (limit is 1000)
             sort: "published_utc"
         });
+
+        news.results.sort(() => Math.random() - 0.5);
     }
     catch (e) {
         error = e.toString();
