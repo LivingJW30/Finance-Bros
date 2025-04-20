@@ -40,7 +40,7 @@ app.post('/api/signup', async (req, res, next) => { //Signup Endpoint
 
     const { username, password } = req.body;
     const hashedPassword = await bcrypt.hash(password, saltRounds);
-    const newUser = { Username: username, Password: hashedPassword, favorites: [] }; //Initializes empty array for favorites
+    const newUser = { Username: username, Password: hashedPassword, favorites: [String] }; //Initializes empty array for favorites
     let error = '';
 
     try {
@@ -250,27 +250,6 @@ app.get('/api/ticker-overview', async (req, res, next) => {
     }
 });
 
-/*app.get('/api/ticker-overview', async (req, res, next) => { //Returns the ticker information from Ticker Overview
-    //incoming: ticker name
-    //outgoing: results[] || error
-
-    const { ticker } = req.query;
-    let results = [];
-    let error = '';
-
-    try { //Storing all ticker data for now, can modify later
-        results = await rest.reference.tickerDetails( 
-            ticker
-        );
-    }
-    catch(e) {
-        error = e.toString();
-    }
-
-    let ret = { results: results, error: error };
-    res.status(200).json(ret);
-});*/
-
 app.post('/api/add-favorite', async (req, res, next) => { //Adds a ticker into favorites array in a specified user
     //incoming: ticker name, username
     //outgoing: error
@@ -369,6 +348,29 @@ app.get('/api/ticker-snapshot', async (req, res, next) => {
         });
     }
 });
+
+//Moved old endpoints down here for better readability. I will keep them in here for reference
+
+/*app.get('/api/ticker-overview', async (req, res, next) => { //Returns the ticker information from Ticker Overview
+    //incoming: ticker name
+    //outgoing: results[] || error
+
+    const { ticker } = req.query;
+    let results = [];
+    let error = '';
+
+    try { //Storing all ticker data for now, can modify later
+        results = await rest.reference.tickerDetails( 
+            ticker
+        );
+    }
+    catch(e) {
+        error = e.toString();
+    }
+
+    let ret = { results: results, error: error };
+    res.status(200).json(ret);
+});*/
 
 /*app.get('/api/ticker-snapshot', async (req, res, next) => {
     //incoming: ticker name
