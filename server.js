@@ -227,11 +227,17 @@ app.get('/api/ticker-overview', async (req, res, next) => {
                 outstandingShares: polygonResponse.results.weighted_shares_outstanding
             },
             branding: {
-                logo: polygonResponse.results.branding?.logo_url,
+                logo: polygonResponse.results.branding?.logo_url
+                    ? `${polygonResponse.results.branding.logo_url}?apiKey=${process.env.POLYGON_API_KEY}` //Logo Support
+                    : null,
                 icon: polygonResponse.results.branding?.icon_url
+                    ? `${polygonResponse.results.branding.icon_url}?apiKey=${process.env.POLYGON_API_KEY}`
+                    : null
             }
         };
 
+        //console.log(simplifiedData.branding.logo); //Debug line
+ 
         const checkTicker = await db.collection("Tickers").findOne({ symbol: ticker });
         
         if(!checkTicker) {
