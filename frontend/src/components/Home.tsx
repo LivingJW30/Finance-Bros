@@ -38,9 +38,12 @@ function Home() {
                     <img src={logo} alt="FinanceBros Logo" className="logo" />
                     <span className="brand-name">FinanceBros</span>
                 </div>
+                <div className="auth-buttons">
+                    <button onClick={() => navigate('/login')}>Login</button>
+                    <button onClick={() => navigate('/signup')}>Sign Up</button>
+                </div>
             </div>
 
-            {/* News Panel Fixed Left */}
             <div className="news-fixed-left">
                 <h2>Latest News</h2>
                 {error ? (
@@ -53,26 +56,32 @@ function Home() {
                                     href={item.article_url}
                                     target="_blank"
                                     rel="noopener noreferrer"
+                                    className="news-title"
                                 >
                                     {item.title}
                                 </a>
+                                <p className="news-description">
+                                    {item.description.split(' ').slice(0, 20).join(' ')}...
+                                </p>
                             </li>
                         ))}
                     </ul>
                 )}
             </div>
 
-            {/* Centered Home Content */}
             <div id="homeDiv">
-                <h1>Stonks</h1>
-                <div className="button-box">
-                    <button onClick={() => navigate('/login')}>Login</button>
-                    <button onClick={() => navigate('/signup')}>Sign Up</button>
-                </div>
+                <h1>Welcome to FinanceBros</h1>
+                <p className="description">
+                    FinanceBros is your go-to platform for tracking, learning, and thriving in the world of finance. 
+                    We bring you real-time market news, current stock evaluations, and a easy to follow overview of the stock markets performance. 
+                    Whether you're a beginner or a seasoned trader, FinanceBros empowers you to make confident financial decisions.
+                </p>
+                <button className="get-started-button" onClick={() => navigate('/login')}>
+                    Get Started Today!
+                </button>
             </div>
         </div>
     );
 }
 
 export default Home;
-
