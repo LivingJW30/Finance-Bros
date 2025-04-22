@@ -6,6 +6,7 @@ import logo from '../assets/logo.png';
 interface NewsItem {
     title: string;
     article_url: string;
+    description: string;
 }
 
 function Home() {
@@ -16,7 +17,7 @@ function Home() {
     useEffect(() => {
         const fetchNews = async () => {
             try {
-                const response = await fetch('/api/news');
+                const response = await fetch('http://localhost:5001/api/news');
                 const data = await response.json();
                 if (data.error) {
                     setError(data.error);
