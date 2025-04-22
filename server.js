@@ -179,10 +179,10 @@ app.get('/api/stockchart', async (req, res, next) => { //Retrieve Stock Chart in
         if (priceData && priceData.results) {
             chartData = priceData.results.map(day => ({
                 close: day.c,  // closing price
-                high: day.l,
-                low: day.l,
-                open: day.o,
-                timestamp: day.t  // timestamp
+                high: day.l, //High
+                low: day.l, //Low 
+                open: day.o, //Open Price
+                timestamp: day.t  // timestamp (in milliseconds)
             }));
         }
     }
