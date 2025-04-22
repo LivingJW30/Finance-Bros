@@ -178,8 +178,11 @@ app.get('/api/stockchart', async (req, res, next) => { //Retrieve Stock Chart in
         // Extract just the closing prices and timestamps
         if (priceData && priceData.results) {
             chartData = priceData.results.map(day => ({
-                price: day.c,  // closing price
-                timestamp: day.t  // timestamp
+                close: day.c,  // closing price
+                high: day.l, //High
+                low: day.l, //Low 
+                open: day.o, //Open Price
+                timestamp: day.t  // timestamp (in milliseconds)
             }));
         }
     }
