@@ -30,7 +30,7 @@ function StockChart({ ticker }: { ticker: string | null }) {
             setLoading(true);
             try {
                 const res = await fetch(
-                    `http://localhost:5001/api/stockchart?ticker=${ticker}&days=15`
+                    `https://mern-lab.ucfknight.site/api/stockchart?ticker=${ticker}&days=15`
                 );
                 const json = await res.json();
                 if (json.chartData) {

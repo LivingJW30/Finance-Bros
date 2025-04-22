@@ -27,7 +27,7 @@ function SearchBar({
 
             //Fetch suggestions from the API based on the input value
             const res = await fetch(
-                `http://localhost:5001/api/search?query=${encodeURIComponent(value)}`
+                `https://mern-lab.ucfknight.site/api/search?query=${encodeURIComponent(value)}`
             );
             const data = await res.json();
             if (!data.error) {

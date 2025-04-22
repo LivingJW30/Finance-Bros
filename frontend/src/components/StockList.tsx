@@ -37,7 +37,7 @@ function StockList({ search, onSelect }: Props) {
         trendingStocks.map(async (stock) => {
           try {
             const res = await fetch(
-              `http://localhost:5001/api/ticker-snapshot?ticker=${stock.ticker}`
+              `https://mern-lab.ucfknight.site/api/ticker-snapshot?ticker=${stock.ticker}`
             );
             const json = await res.json();
 

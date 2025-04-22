@@ -20,8 +20,8 @@ function QuotePanel({ ticker }: { ticker: string | null }) {
             if (!ticker) return;
 
             const [overviewRes, snapshotRes] = await Promise.all([
-                fetch(`http://localhost:5001/api/ticker-overview?ticker=${ticker}&username=test`).then(res => res.json()),
-                fetch(`http://localhost:5001/api/ticker-snapshot?ticker=${ticker}`).then(res => res.json())
+                fetch(`https://mern-lab.ucfknight.site/api/ticker-overview?ticker=${ticker}&username=test`).then(res => res.json()),
+                fetch(`https://mern-lab.ucfknight.site/api/ticker-snapshot?ticker=${ticker}`).then(res => res.json())
             ]);
 
             if (overviewRes.success && snapshotRes.success) {
