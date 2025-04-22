@@ -332,7 +332,7 @@ app.get('/api/ticker-snapshot', async (req, res, next) => {
                 open: polygonResponse.ticker?.day?.o || 0,
                 high: polygonResponse.ticker?.day?.h || 0,
                 low: polygonResponse.ticker?.day?.l || 0,
-                close: polygonResponse.ticker?.day?.c || 0
+                close: polygonResponse.ticker?.day?.c || 0 //Current price of stock
             },
             volume: polygonResponse.ticker?.day?.v || 0,
             volumeWeightedAvgPrice: polygonResponse.ticker?.day?.vw || 0,
