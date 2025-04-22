@@ -337,8 +337,8 @@ app.get('/api/ticker-snapshot', async (req, res, next) => {
             volume: polygonResponse.ticker?.day?.v || 0,
             volumeWeightedAvgPrice: polygonResponse.ticker?.day?.vw || 0,
             change: {
-                value: polygonResponse.todaysChange || 0,
-                percent: polygonResponse.todaysChangePerc || 0
+                value: polygonResponse.ticker.todaysChange || 0,
+                percent: polygonResponse.ticker.todaysChangePerc || 0
             },
             lastUpdated: new Date(polygonResponse.ticker?.lastTrade?.t || Date.now()).toISOString()
         };

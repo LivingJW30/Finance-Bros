@@ -52,7 +52,7 @@ function StockList({ search, onSelect }: Props) {
             console.log(json);
             if (json.success && json.data) {
               data[stock.ticker] = {
-                current: json.data.price.current,
+                current: json.data.price.close,
                 changeValue: json.data.change.value,
                 changePercent: json.data.change.percent,
               };
