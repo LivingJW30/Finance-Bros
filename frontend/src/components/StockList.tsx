@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
-//Preset list of trending stocks
-// Could maybe have them be fetched from api in the future
+// List of trending stocks
 const trendingStocks = [
   { ticker: 'AAPL', name: 'Apple Inc.' },
   { ticker: 'TSLA', name: 'Tesla Inc.' },
@@ -13,17 +12,27 @@ const trendingStocks = [
   { ticker: 'NFLX', name: 'Netflix Inc.' },
   { ticker: 'BRK.B', name: 'Berkshire Hathaway Inc.' },
   { ticker: 'V', name: 'Visa Inc.' },
+  { ticker: 'JPM', name: 'JPMorgan Chase & Co.' },
+  { ticker: 'BAC', name: 'Bank of America Corporation' },
+  { ticker: 'XOM', name: 'Exxon Mobil Corporation' },
+  { ticker: 'PFE', name: 'Pfizer Inc.' },
+  { ticker: 'KO', name: 'The Coca-Cola Company' },
+  { ticker: 'PEP', name: 'PepsiCo Inc.' },
+  { ticker: 'DIS', name: 'The Walt Disney Company' },
+  { ticker: 'CSCO', name: 'Cisco Systems Inc.' },
+  { ticker: 'INTC', name: 'Intel Corporation' },
+  { ticker: 'ADBE', name: 'Adobe Inc.' },
 ];
 
 type Snapshot = {
-  current: number; //Current stock price
-  changeValue: number; //Price change value
-  changePercent: number; //Price change percentage
+  current: number; // Current stock price
+  changeValue: number; // Price change value
+  changePercent: number; // Price change percentage
 };
 
 type Props = {
-  search: string; //Search input value
-  onSelect: (ticker: string) => void; //Callback when a stock is selected
+  search: string; // Search input value
+  onSelect: (ticker: string) => void; // Callback when a stock is selected
 };
 
 function StockList({ search, onSelect }: Props) {
@@ -40,10 +49,10 @@ function StockList({ search, onSelect }: Props) {
               `https://mern-lab.ucfknight.site/api/ticker-snapshot?ticker=${stock.ticker}`
             );
             const json = await res.json();
-
+            console.log(json);
             if (json.success && json.data) {
               data[stock.ticker] = {
-                current: json.data.price.current,
+                current: json.data.price.close,
                 changeValue: json.data.change.value,
                 changePercent: json.data.change.percent,
               };
@@ -60,7 +69,7 @@ function StockList({ search, onSelect }: Props) {
     fetchSnapshots();
   }, []);
 
-  //Find stocks that match the search input
+  // Filter stocks based on the search input
   const filteredStocks = trendingStocks.filter((stock) =>
     stock.ticker.toLowerCase().includes(search.toLowerCase()) ||
     stock.name.toLowerCase().includes(search.toLowerCase())
@@ -77,65 +86,71 @@ function StockList({ search, onSelect }: Props) {
         flex: 1,
         overflowY: 'auto',
         maxHeight: '80vh',
-        display: 'flex',
-        flexDirection: 'column',
-        gap: '1rem',
       }}
     >
       <h3 style={{ marginTop: 0 }}>Trending Stocks</h3>
-      {filteredStocks.map((stock, index) => {
-        const snapshot = snapshots[stock.ticker];
-        const isUp = snapshot?.changeValue >= 0;
+      <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+        <thead>
+          <tr style={{ borderBottom: '1px solid #444' }}>
+            <th style={{ textAlign: 'left', padding: '1rem' }}>Symbol</th>
+            <th style={{ textAlign: 'left', padding: '1rem' }}>Name</th>
+            <th style={{ textAlign: 'right', padding: '1rem' }}>Last Price</th>
+            <th style={{ textAlign: 'right', padding: '1rem' }}>Change</th>
+            <th style={{ textAlign: 'right', padding: '1rem' }}>Percent Change</th>
+          </tr>
+        </thead>
+        <tbody>
+          {filteredStocks.map((stock, index) => {
+            const snapshot = snapshots[stock.ticker];
+            const isUp = snapshot?.changeValue >= 0;
 
-        return (
-          <div
-            key={index}
-            onClick={() => onSelect(stock.ticker)} //Handle stock selection
-            style={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              backgroundColor: '#1e1e1e',
-              padding: '1rem',
-              borderRadius: '6px',
-              cursor: 'pointer',
-              border: '1px solid #444',
-              transition: 'background 0.2s',
-            }}
-            onMouseEnter={(e) =>
-              (e.currentTarget.style.backgroundColor = '#333')
-            }
-            onMouseLeave={(e) =>
-              (e.currentTarget.style.backgroundColor = '#1e1e1e')
-            }
-          >
-            <div style={{ flex: 1 }}>
-              <strong>{stock.ticker}</strong>{' '}
-              <span style={{ color: '#aaa', fontSize: '0.9rem' }}>
-                — {stock.name}
-              </span>
-            </div>
-
-            {snapshot ? (
-              <div style={{ textAlign: 'right', minWidth: '130px' }}>
-                <div>${snapshot.current.toFixed(2)}</div>
-                <div
+            return (
+              <tr
+                key={index}
+                onClick={() => onSelect(stock.ticker)} // Handle stock selection
+                style={{
+                  cursor: 'pointer',
+                  backgroundColor: '#1e1e1e',
+                  transition: 'background 0.2s',
+                  height: '4rem', // Increase row height
+                }}
+                onMouseEnter={(e) =>
+                  (e.currentTarget.style.backgroundColor = '#333')
+                }
+                onMouseLeave={(e) =>
+                  (e.currentTarget.style.backgroundColor = '#1e1e1e')
+                }
+              >
+                <td style={{ padding: '1rem' }}>
+                  <strong>{stock.ticker}</strong>
+                </td>
+                <td style={{ padding: '1rem', color: '#aaa' }}>{stock.name}</td>
+                <td style={{ padding: '1rem', textAlign: 'right' }}>
+                  {snapshot ? `$${snapshot.current.toFixed(2)}` : 'Loading...'}
+                </td>
+                <td
                   style={{
-                    color: isUp ? '#4caf50' : '#f44336',
-                    fontSize: '0.85rem',
+                    padding: '1rem',
+                    textAlign: 'right',
+                    color: snapshot ? (isUp ? '#8aff90' : '#f23d4c') : '#888',
                   }}
                 >
-                  {isUp ? '+' : ''}
-                  {snapshot.changeValue.toFixed(2)} (
-                  {snapshot.changePercent.toFixed(2)}%)
-                </div>
-              </div>
-            ) : (
-              <div style={{ fontSize: '0.8rem', color: '#888' }}>Loading...</div>
-            )}
-          </div>
-        );
-      })}
+                  {snapshot ? `${isUp ? '+' : ''}${snapshot.changeValue.toFixed(2)}` : '—'}
+                </td>
+                <td
+                  style={{
+                    padding: '1rem',
+                    textAlign: 'right',
+                    color: snapshot ? (isUp ? '#8aff90' : '#f23d4c') : '#888',
+                  }}
+                >
+                  {snapshot ? `${snapshot.changePercent.toFixed(2)}%` : '—'}
+                </td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
     </div>
   );
 }

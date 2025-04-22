@@ -74,7 +74,16 @@ function StockChart({ ticker }: { ticker: string | null }) {
     if (!ticker) return null;
 
     return (
-        <div style={{ width: '100%', marginTop: '2rem' }}>
+        <div
+            style={{
+                width: '100%',
+                marginTop: '2rem',
+                height: '500px', // Set a fixed height for the container to make the graph taller
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'flex-end', // Ensure the bottom of the graph stays in the same spot
+            }}
+        >
             {loading ? (
                 <p style={{ color: '#888', textAlign: 'center' }}>Loading chart...</p>
             ) : (
@@ -82,7 +91,7 @@ function StockChart({ ticker }: { ticker: string | null }) {
                     options={options}
                     series={series}
                     type="candlestick"
-                    height="100%"
+                    height="100%" // Ensure the graph fills the container height
                 />
             )}
         </div>

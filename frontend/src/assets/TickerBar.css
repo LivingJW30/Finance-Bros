@@ -1,0 +1,48 @@
+#mainHeader {
+    position: relative; /* Ensure the container is positioned */
+    background-color: #f8f9fa; /* Example background color */
+    padding-bottom: 10px; /* Add some padding if needed */
+}
+.ticker-container {
+    position: absolute; /* Position it absolutely within the header */
+    top: 0;
+    width: 100%;
+    background-color: #202020;
+    color: #fff;
+    padding: 10px 0;
+    font-family: monospace;
+    border-bottom: 2px solid #333;
+    box-sizing: border-box;
+    z-index: 1;
+  }
+  
+  .ticker-content {
+    display: flex;
+    width: max-content;
+    animation: scroll-left 60s linear infinite;
+  }
+  
+  .ticker-item {
+    display: inline-block;
+    margin: 0 30px;
+    font-size: 1rem;
+    white-space: nowrap;
+  }
+  
+  .up-arrow {
+    color: #4caf50;
+  }
+  
+  .down-arrow {
+    color: #f44336;
+  }
+  
+  @keyframes scroll-left {
+    0% {
+      transform: translateX(0%);
+    }
+    100% {
+      transform: translateX(-50%);
+    }
+  }
+  

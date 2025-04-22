@@ -332,13 +332,13 @@ app.get('/api/ticker-snapshot', async (req, res, next) => {
                 open: polygonResponse.ticker?.day?.o || 0,
                 high: polygonResponse.ticker?.day?.h || 0,
                 low: polygonResponse.ticker?.day?.l || 0,
-                close: polygonResponse.ticker?.day?.c || 0
+                close: polygonResponse.ticker?.day?.c || 0 //Current price of stock
             },
             volume: polygonResponse.ticker?.day?.v || 0,
             volumeWeightedAvgPrice: polygonResponse.ticker?.day?.vw || 0,
             change: {
-                value: polygonResponse.todaysChange || 0,
-                percent: polygonResponse.todaysChangePerc || 0
+                value: polygonResponse.ticker.todaysChange || 0,
+                percent: polygonResponse.ticker.todaysChangePerc || 0
             },
             lastUpdated: new Date(polygonResponse.ticker?.lastTrade?.t || Date.now()).toISOString()
         };
