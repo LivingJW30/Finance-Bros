@@ -84,7 +84,7 @@ function QuotePanel({ ticker }: { ticker: string | null }) {
                 </p>
                 <p>
                     Change Today:{' '}
-                    <span style={{ color: data.changeValue >= 0 ? '#4caf50' : '#f44336' }}>
+                    <span style={{ color: data.changeValue >= 0 ? '#8aff90' : '#f23d4c' }}>
                         {data.changeValue >= 0 ? '+' : ''}
                         {data.changeValue.toFixed(2)} ({data.changePercent.toFixed(2)}%)
                     </span>
