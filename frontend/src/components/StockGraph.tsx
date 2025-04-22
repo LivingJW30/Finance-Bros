@@ -55,6 +55,15 @@ function StockChart({ ticker }: { ticker: string | null }) {
         },
     ];
 
+    const openCloseHighs = data.map(d => Math.max(d.open, d.close));
+    const lows = data.map(d => d.low);
+
+    const highestOpenOrClose = Math.max(...openCloseHighs);
+    const minLow = Math.min(...lows);
+
+    const roundedMax = Math.ceil(highestOpenOrClose / 5) * 5;
+    const roundedMin = Math.floor(minLow / 5) * 5;
+
     const options: ApexOptions = {
         chart: {
             type: 'candlestick',
@@ -63,13 +72,30 @@ function StockChart({ ticker }: { ticker: string | null }) {
             zoom: { enabled: true },
         },
         theme: { mode: 'dark' },
-        xaxis: { type: 'datetime' },
+        xaxis: {
+            type: 'datetime',
+            labels: {
+                style: { colors: '#e0e0e0' },
+                datetimeFormatter: {
+                    day: 'MMM dd',      // Example: "Apr 22"
+                    month: 'MMM',       // Optional: "Apr"
+                    year: 'yyyy'        // Optional: "2024"
+                },
+            },
+            tooltip: {
+                enabled: true,
+            },
+            tickAmount: 10, // optional, controls how many ticks are shown
+        },
         yaxis: {
+            min: roundedMin,
+            max: roundedMax,
             tooltip: { enabled: true },
             labels: { style: { colors: '#e0e0e0' } },
         },
         tooltip: { theme: 'dark' },
     };
+
 
     if (!ticker) return null;
 
