@@ -17,7 +17,7 @@ function Home() {
     useEffect(() => {
         const fetchNews = async () => {
             try {
-                const response = await fetch('http://localhost:5001/api/news');
+                const response = await fetch('https://mern-lab.ucfknight.site/api/news');
                 const data = await response.json();
                 if (data.error) {
                     setError(data.error);
