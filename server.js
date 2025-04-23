@@ -340,7 +340,14 @@ app.get('/api/ticker-snapshot', async (req, res, next) => {
             lastUpdated: new Date(polygonResponse.ticker?.lastTrade?.t || Date.now()).toISOString()
         };
 
-        // await db.collection('Snapshot').insertOne(simplifiedData); (for testing)
+
+        /* For testing the data sent, we could also add a snapshot collection possibly
+        const checkSnapshot = await db.collection('Snapshot').findOne({ symbol: ticker });
+        
+        if(!checkSnapshot) {
+            await db.collection('Snapshot').insertOne(simplifiedData);
+        }
+        */
 
         res.status(200).json({
             success: true,
