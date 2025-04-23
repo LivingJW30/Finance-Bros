@@ -216,26 +216,20 @@ app.get('/api/ticker-overview', async (req, res, next) => {
                 name: polygonResponse.results.name,
                 description: polygonResponse.results.description,
                 industry: polygonResponse.results.sic_description,
-                employees: polygonResponse.results.total_employees,
-                founded: polygonResponse.results.list_date //ipo date
-            },
-            contact: {
-                website: polygonResponse.results.homepage_url,
-                phone: polygonResponse.results.phone_number,
-                address: polygonResponse.results.address
             },
             financials: {
                 marketCap: polygonResponse.results.market_cap,
                 currency: polygonResponse.results.currency_name,
-                outstandingShares: polygonResponse.results.weighted_shares_outstanding
             },
             branding: {
+                /*
                 logo: polygonResponse.results.branding?.logo_url
                     ? `${polygonResponse.results.branding.logo_url}?apiKey=${process.env.POLYGON_API_KEY}` //Logo Support
                     : null,
-                icon: polygonResponse.results.branding?.icon_url
-                    ? `${polygonResponse.results.branding.icon_url}?apiKey=${process.env.POLYGON_API_KEY}`
-                    : null
+                */
+                logo: polygonResponse.results.branding?.icon_url
+                    ? `${polygonResponse.results.branding.icon_url}?apiKey=${process.env.POLYGON_API_KEY}` //Sends icons rather than full logos
+                    : null //This looks way better on the stock page rather than the full logo
             }
         };
 
