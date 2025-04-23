@@ -51,8 +51,9 @@ function Signup() {
                 </a>
 
                 <div className="logo-container">
-                    <img src={logo} alt="FinanceBros Logo" className="logo" />
-                    <span className="brand-name">FinanceBros</span>
+                <a href="/">
+       		    <img src={logo} alt="FinanceBros Logo" className="logo" />
+    		</a>
                 </div>
             </header>
 
@@ -93,6 +94,12 @@ function Signup() {
                         </label><br /><br />
 
                         <button type="submit">Sign Up</button>
+
+    			<p style={{ marginTop: '1rem' }}>
+        		    <a href="/login" style={{ color: '#007bff', textDecoration: 'none' }}>
+            			Already have an account? Login here!
+        		    </a>
+    			</p>
                     </form>
 
                     {message && <p style={{ marginTop: '1rem', color: '#8AFF90' }}>{message}</p>}

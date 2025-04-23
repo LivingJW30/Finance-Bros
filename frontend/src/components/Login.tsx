@@ -54,8 +54,9 @@ function Login()
                 </a>
 
                 <div className="logo-container">
-                    <img src={logo} alt="FinanceBros Logo" className="logo" />
-                    <span className="brand-name">FinanceBros</span>
+                <a href="/">
+        	     <img src={logo} alt="FinanceBros Logo" className="logo" />
+    		</a>
                 </div>
             </header>
 
@@ -88,6 +89,11 @@ function Login()
                         </label><br /><br />
 
                         <button type="submit">Login</button>
+    			<p style={{ marginTop: '1rem' }}>
+        		    <a href="/signup" style={{ color: '#007bff', textDecoration: 'none' }}>
+            			Don't have an account? Register here
+        		    </a>
+    			</p>
                     </form>
 
                     {message && <p style={{ marginTop: '1rem', color: '#8AFF90' }}>{message}</p>}
