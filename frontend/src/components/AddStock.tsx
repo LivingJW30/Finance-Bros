@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import SearchBar from './SearchBar';
 import StockList from './StockList';
 import QuotePanel from './QuotePanel';
 import logo from '../assets/logo.png';
 
-
 function AddStock() {
     const [selectedStock, setSelectedStock] = useState<string | null>(null);
     const [searchTerm, setSearchTerm] = useState('');
+    const navigate = useNavigate(); // React Router's navigate function
 
     useEffect(() => {
         document.body.style.margin = '0';
@@ -75,7 +76,16 @@ function AddStock() {
                 }}
             >
                 <StockList search={searchTerm} onSelect={setSelectedStock} />
-                <QuotePanel ticker={selectedStock} />
+                <QuotePanel
+                    ticker={selectedStock}
+                    onAddStock={() => {
+                        if (selectedStock) {
+                            navigate('/home', { state: { newStock: selectedStock } }); // Pass stock to UserHome
+                        } else {
+                            alert('Please select a stock to add.');
+                        }
+                    }}
+                />
             </div>
         </div>
     );
