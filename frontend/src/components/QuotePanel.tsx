@@ -18,19 +18,12 @@ function QuotePanel({ ticker, onAddStock }: { ticker: string | null, onAddStock?
   const [data, setData] = useState<QuoteData | null>(null);
   const username = JSON.parse(localStorage.getItem('user_data') || '{}').username || 'guest';
 
-<<<<<<< HEAD
-            const [overviewRes, snapshotRes] = await Promise.all([
-                fetch(`https://mern-lab.ucfknight.site/api/ticker-overview?ticker=${ticker}&username=test`).then(res => res.json()),
-                fetch(`https://mern-lab.ucfknight.site/api/ticker-snapshot?ticker=${ticker}`).then(res => res.json())
-            ]);
-=======
   useEffect(() => {
     async function fetchData() {
       if (!ticker || !username) {
         console.warn('🚫 Missing ticker or username');
         return;
       }
->>>>>>> f69d2985064233c5cad9eb93bb2ab6ba246c5c94
 
       console.log('📡 Fetching data for:', ticker, 'as user:', username);
 
