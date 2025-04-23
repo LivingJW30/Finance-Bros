@@ -325,20 +325,22 @@ app.get('/api/ticker-snapshot', async (req, res, next) => {
         const simplifiedData = {
             symbol: ticker,
             price: {
-                current: polygonResponse.ticker?.lastTrade?.p || polygonResponse.ticker?.lastQuote?.p || 0,
+                //current: polygonResponse.ticker?.lastTrade?.p || polygonResponse.ticker?.lastQuote?.p || 0, //May still need this
                 open: polygonResponse.ticker?.day?.o || 0,
                 high: polygonResponse.ticker?.day?.h || 0,
                 low: polygonResponse.ticker?.day?.l || 0,
                 close: polygonResponse.ticker?.day?.c || 0 //Current price of stock
             },
-            volume: polygonResponse.ticker?.day?.v || 0,
-            volumeWeightedAvgPrice: polygonResponse.ticker?.day?.vw || 0,
+            // volume: polygonResponse.ticker?.day?.v || 0,
+            // volumeWeightedAvgPrice: polygonResponse.ticker?.day?.vw || 0,
             change: {
                 value: polygonResponse.ticker.todaysChange || 0,
                 percent: polygonResponse.ticker.todaysChangePerc || 0
             },
             lastUpdated: new Date(polygonResponse.ticker?.lastTrade?.t || Date.now()).toISOString()
         };
+
+        // await db.collection('Snapshot').insertOne(simplifiedData); (for testing)
 
         res.status(200).json({
             success: true,
