@@ -216,26 +216,20 @@ app.get('/api/ticker-overview', async (req, res, next) => {
                 name: polygonResponse.results.name,
                 description: polygonResponse.results.description,
                 industry: polygonResponse.results.sic_description,
-                employees: polygonResponse.results.total_employees,
-                founded: polygonResponse.results.list_date //ipo date
-            },
-            contact: {
-                website: polygonResponse.results.homepage_url,
-                phone: polygonResponse.results.phone_number,
-                address: polygonResponse.results.address
             },
             financials: {
                 marketCap: polygonResponse.results.market_cap,
                 currency: polygonResponse.results.currency_name,
-                outstandingShares: polygonResponse.results.weighted_shares_outstanding
             },
             branding: {
+                /*
                 logo: polygonResponse.results.branding?.logo_url
                     ? `${polygonResponse.results.branding.logo_url}?apiKey=${process.env.POLYGON_API_KEY}` //Logo Support
                     : null,
-                icon: polygonResponse.results.branding?.icon_url
-                    ? `${polygonResponse.results.branding.icon_url}?apiKey=${process.env.POLYGON_API_KEY}`
-                    : null
+                */
+                logo: polygonResponse.results.branding?.icon_url
+                    ? `${polygonResponse.results.branding.icon_url}?apiKey=${process.env.POLYGON_API_KEY}` //Sends icons rather than full logos
+                    : null //This looks way better on the stock page rather than the full logo
             }
         };
 
@@ -331,20 +325,29 @@ app.get('/api/ticker-snapshot', async (req, res, next) => {
         const simplifiedData = {
             symbol: ticker,
             price: {
-                current: polygonResponse.ticker?.lastTrade?.p || polygonResponse.ticker?.lastQuote?.p || 0,
+                //current: polygonResponse.ticker?.lastTrade?.p || polygonResponse.ticker?.lastQuote?.p || 0, //May still need this
                 open: polygonResponse.ticker?.day?.o || 0,
                 high: polygonResponse.ticker?.day?.h || 0,
                 low: polygonResponse.ticker?.day?.l || 0,
                 close: polygonResponse.ticker?.day?.c || 0 //Current price of stock
             },
-            volume: polygonResponse.ticker?.day?.v || 0,
-            volumeWeightedAvgPrice: polygonResponse.ticker?.day?.vw || 0,
+            // volume: polygonResponse.ticker?.day?.v || 0,
+            // volumeWeightedAvgPrice: polygonResponse.ticker?.day?.vw || 0,
             change: {
                 value: polygonResponse.ticker.todaysChange || 0,
                 percent: polygonResponse.ticker.todaysChangePerc || 0
             },
             lastUpdated: new Date(polygonResponse.ticker?.lastTrade?.t || Date.now()).toISOString()
         };
+
+
+        /* For testing the data sent, we could also add a snapshot collection possibly
+        const checkSnapshot = await db.collection('Snapshot').findOne({ symbol: ticker });
+        
+        if(!checkSnapshot) {
+            await db.collection('Snapshot').insertOne(simplifiedData);
+        }
+        */
 
         res.status(200).json({
             success: true,
