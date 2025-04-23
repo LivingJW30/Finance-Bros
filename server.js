@@ -405,37 +405,7 @@ app.get('/api/ticker-snapshot', async (req, res, next) => {
     res.status(200).json(ret);
 });*/
 
-app.post('/api/add-favorite', async (req, res, next) => {
-    // incoming: ticker, username
-    // outgoing: { success: boolean, error?: string }
-  
-    const { ticker, username } = req.body;
-  
-    if (!ticker || !username) {
-      return res.status(400).json({ success: false, error: 'Missing ticker or username' });
-    }
-  
-    try {
-      const user = await db.collection('Users').findOne({ Username: username });
-  
-      if (!user) {
-        return res.status(404).json({ success: false, error: 'User not found' });
-      }
-  
-      if (user.favorites.includes(ticker)) {
-        return res.status(200).json({ success: false, error: 'Ticker already in favorites' });
-      }
-  
-      await db.collection('Users').updateOne(
-        { Username: username },
-        { $addToSet: { favorites: ticker } }
-      );
-  
-      return res.status(200).json({ success: true });
-    } catch (e) {
-      return res.status(500).json({ success: false, error: e.message });
-    }
-  });
+
   
 
 app.listen(5001); // start Node + Express server on
