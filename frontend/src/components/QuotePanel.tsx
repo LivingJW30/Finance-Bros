@@ -29,8 +29,8 @@ function QuotePanel({ ticker, onAddStock }: { ticker: string | null, onAddStock?
 
       try {
         const [overviewRes, snapshotRes] = await Promise.all([
-          fetch(`http://localhost:5001/api/ticker-overview?ticker=${ticker}&username=${username}`).then((res) => res.json()),
-          fetch(`http://localhost:5001/api/ticker-snapshot?ticker=${ticker}`).then((res) => res.json())
+          fetch(`https://mern-lab.ucfknight.site/api/ticker-overview?ticker=${ticker}&username=${username}`).then((res) => res.json()),
+          fetch(`https://mern-lab.ucfknight.site/api/ticker-snapshot?ticker=${ticker}`).then((res) => res.json())
         ]);
 
         console.log('✅ Overview response:', overviewRes);
@@ -62,7 +62,7 @@ function QuotePanel({ ticker, onAddStock }: { ticker: string | null, onAddStock?
     if (!ticker) return;
 
     try {
-      const response = await fetch('http://localhost:5001/api/add-favorite', {
+      const response = await fetch('https://mern-lab.ucfknight.site/api/add-favorite', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ ticker, username }),
@@ -153,7 +153,7 @@ function QuotePanel({ ticker, onAddStock }: { ticker: string | null, onAddStock?
         </p>
       </div>
 
-      <div style={{ flexGrow: 1, overflow: 'hidden', maxHeight: '300px' }}>
+      <div style={{ flexGrow: 1, display: 'flex', }}>
         <StockGraph ticker={ticker} />
       </div>
     </div>

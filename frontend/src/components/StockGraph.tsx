@@ -103,8 +103,7 @@ function StockChart({ ticker }: { ticker: string | null }) {
         <div
             style={{
                 width: '100%',
-                marginTop: '2rem',
-                height: '500px', // Set a fixed height for the container to make the graph taller
+                height: '280px', // Set a fixed height for the container to make the graph taller
                 display: 'flex',
                 flexDirection: 'column',
                 justifyContent: 'flex-end', // Ensure the bottom of the graph stays in the same spot
