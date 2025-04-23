@@ -112,7 +112,7 @@ function StockList({ search, onSelect }: Props) {
                   cursor: 'pointer',
                   backgroundColor: '#1e1e1e',
                   transition: 'background 0.2s',
-                  height: '4rem', // Increase row height
+                  height: '4rem', 
                 }}
                 onMouseEnter={(e) =>
                   (e.currentTarget.style.backgroundColor = '#333')
