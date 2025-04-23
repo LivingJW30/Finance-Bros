@@ -361,6 +361,31 @@ app.get('/api/ticker-snapshot', async (req, res, next) => {
     }
 });
 
+app.get('/api/get-favorites', async (req, res, next) => {
+    //incoming: username
+    //outgoing: favorites[], error
+
+    const { username } = req.query;
+    let favorites = [];
+    let error = '';
+
+    try {
+        const user = await db.collection('Users').findOne({ Username: username });
+
+        if (!user) {
+            return res.status(400).json({ favorites: [], error: 'User does not exist' });
+        }
+
+        // Safely assign favorites
+        favorites = user.favorites;
+    } catch (e) {
+        error = e.toString();
+    }
+
+    let ret = { favorites: favorites, error: error};
+    res.status(200).json(ret);
+});
+
 //Moved old endpoints down here for better readability. I will keep them in here for reference
 
 /*app.get('/api/ticker-overview', async (req, res, next) => { //Returns the ticker information from Ticker Overview
