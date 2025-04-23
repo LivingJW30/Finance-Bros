@@ -10,18 +10,21 @@ function SearchBar({
     value, //Current input value
     onChange, //Function to update the input value
     onSelect, //Function to handle selection of a stock
+    setSuggestions,
 }: {
     value: string;
     onChange: (value: string) => void;
     onSelect: (ticker: string) => void;
+    setSuggestions: (results: { ticker: string; name: string }[]) => void;
 }) {
-    const [suggestions, setSuggestions] = useState<Stock[]>([]); //List of stock suggestions
     const [showDropdown, setShowDropdown] = useState(false); //Controls dropdown visibility
+    const [suggestions, localSetSuggestions] = useState<{ ticker: string; name: string }[]>([]);
 
     useEffect(() => {
         const fetchSuggestions = async () => {
             if (value.length === 0) {
                 setSuggestions([]); 
+                localSetSuggestions([]);
                 return;
             }
 
@@ -32,6 +35,7 @@ function SearchBar({
             const data = await res.json();
             if (!data.error) {
                 setSuggestions(data.results); 
+                localSetSuggestions(data.results);
                 setShowDropdown(true); 
             }
         };
@@ -39,7 +43,7 @@ function SearchBar({
         // Delay api call to avoid excessive requests
         const timeout = setTimeout(fetchSuggestions, 200);
         return () => clearTimeout(timeout); // 
-    }, [value]);
+    }, [value, setSuggestions]);
 
     const handleSelect = (ticker: string) => {
         onSelect(ticker); //Notify parent of the selected stock
@@ -70,7 +74,7 @@ function SearchBar({
                 />
 
                 {/* Dropdown showing stock suggestions */}
-                {showDropdown && suggestions.length > 0 && (
+                {showDropdown && value && (
                     <div
                         style={{ 
                             position: 'absolute',
@@ -85,10 +89,10 @@ function SearchBar({
                             overflowY: 'auto',
                         }}
                     >
-                        {suggestions.map((stock, idx) => (
+{suggestions.map((stock, idx) => (
                             <div
                                 key={idx}
-                                onClick={() => handleSelect(stock.ticker)} 
+                                onClick={() => handleSelect(stock.ticker)}
                                 style={{
                                     padding: '0.5rem 0.75rem',
                                     fontSize: '0.85rem',
@@ -96,13 +100,10 @@ function SearchBar({
                                     borderBottom: '1px solid #333',
                                     transition: 'background 0.2s',
                                 }}
-                                onMouseEnter={(e) =>
-                                    (e.currentTarget.style.backgroundColor = '#333') //Highlight on hover
-                                }
-                                onMouseLeave={(e) =>
-                                    (e.currentTarget.style.backgroundColor = '#1e1e1e') //reset on leave
-                                }
+                                onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#333')}
+                                onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#1e1e1e')}
                             >
+                                
                                 {/*Display the stock ticker and name */}
                                 <strong>{stock.ticker}</strong>{' '}
                                 <span style={{ color: '#aaa' }}>— {stock.name}</span>

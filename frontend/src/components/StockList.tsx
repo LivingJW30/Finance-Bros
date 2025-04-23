@@ -33,47 +33,50 @@ type Snapshot = {
 type Props = {
   search: string; // Search input value
   onSelect: (ticker: string) => void; // Callback when a stock is selected
+  suggestions: { ticker: string; name: string }[];
 };
 
-function StockList({ search, onSelect }: Props) {
-  const [snapshots, setSnapshots] = useState<Record<string, Snapshot>>({});
+function StockList({ search, onSelect, suggestions }: Props) {
+    const [snapshots, setSnapshots] = useState<Record<string, Snapshot>>({});
 
-  useEffect(() => {
-    async function fetchSnapshots() {
-      const data: Record<string, Snapshot> = {};
+    useEffect(() => {
+      const timeout = setTimeout(async () => {
+        const data: Record<string, Snapshot> = {};
 
-      await Promise.all(
-        trendingStocks.map(async (stock) => {
-          try {
-            const res = await fetch(
-              `https://mern-lab.ucfknight.site/api/ticker-snapshot?ticker=${stock.ticker}`
+        // Combine trending stocks and searched suggestions (avoiding duplicates)
+    	const uniqueStocks = new Map<string, { ticker: string; name: string }>();
+    	trendingStocks.forEach(stock => uniqueStocks.set(stock.ticker, stock));
+    	suggestions.forEach(stock => uniqueStocks.set(stock.ticker, stock));
+
+        await Promise.all(
+      	  Array.from(uniqueStocks.values()).map(async (stock) => {
+            try {
+              const res = await fetch(
+                `https://mern-lab.ucfknight.site/api/ticker-snapshot?ticker=${stock.ticker}`
             );
             const json = await res.json();
-            console.log(json);
             if (json.success && json.data) {
-              data[stock.ticker] = {
-                current: json.data.price.close,
-                changeValue: json.data.change.value,
-                changePercent: json.data.change.percent,
-              };
+                data[stock.ticker] = {
+                  current: json.data.price.close,
+                  changeValue: json.data.change.value,
+                  changePercent: json.data.change.percent,
+                };
+              }
+            } catch (err) {
+              console.error(`Error fetching ${stock.ticker}`, err);
             }
-          } catch (err) {
-            console.error(`Error fetching ${stock.ticker}`, err);
-          }
-        })
-      );
+          })
+        );
 
-      setSnapshots(data);
-    }
+        setSnapshots(data);
+      }, 200); // debounce time in ms
 
-    fetchSnapshots();
-  }, []);
+      return () => clearTimeout(timeout);
+    }, [suggestions]);
 
-  // Filter stocks based on the search input
-  const filteredStocks = trendingStocks.filter((stock) =>
-    stock.ticker.toLowerCase().includes(search.toLowerCase()) ||
-    stock.name.toLowerCase().includes(search.toLowerCase())
-  );
+
+
+  const displayStocks = search && suggestions.length > 0 ? suggestions : trendingStocks;
 
   return (
     <div
@@ -100,7 +103,7 @@ function StockList({ search, onSelect }: Props) {
           </tr>
         </thead>
         <tbody>
-          {filteredStocks.map((stock, index) => {
+        {displayStocks.map((stock, index) => {
             const snapshot = snapshots[stock.ticker];
             const isUp = snapshot?.changeValue >= 0;
 
@@ -156,4 +159,3 @@ function StockList({ search, onSelect }: Props) {
 }
 
 export default StockList;
-

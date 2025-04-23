@@ -8,6 +8,7 @@ import logo from '../assets/logo.png';
 function AddStock() {
     const [selectedStock, setSelectedStock] = useState<string | null>(null);
     const [searchTerm, setSearchTerm] = useState('');
+    const [suggestions, setSuggestions] = useState([]);
     const navigate = useNavigate(); // React Router's navigate function
 
     useEffect(() => {
@@ -60,7 +61,7 @@ function AddStock() {
                 </div>
 
                 {/* Right: Search Bar */}
-                <SearchBar value={searchTerm} onChange={setSearchTerm} onSelect={setSelectedStock} />
+                <SearchBar value={searchTerm} onChange={setSearchTerm} onSelect={setSelectedStock} setSuggestions={setSuggestions} />
             </div>
 
 
@@ -75,7 +76,7 @@ function AddStock() {
                     overflow: 'auto',
                 }}
             >
-                <StockList search={searchTerm} onSelect={setSelectedStock} />
+                <StockList search={searchTerm} onSelect={setSelectedStock} suggestions={suggestions}/>
                 <QuotePanel
                     ticker={selectedStock}
                     onAddStock={() => {
@@ -92,4 +93,3 @@ function AddStock() {
 }
 
 export default AddStock;
-
