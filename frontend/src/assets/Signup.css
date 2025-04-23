@@ -24,8 +24,10 @@ body {
     width: 400px;
     max-width: 90vw;
     width: 60%;
-    margin-top: 4rem;
+    margin-top: 2rem;
     box-sizing: border-box;
+    position: absolue;
+    top: 30px;
 }
 
 

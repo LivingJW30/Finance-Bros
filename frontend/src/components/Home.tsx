@@ -37,7 +37,6 @@ function Home() {
             <div id="mainHeader">
                 <div className="logo-container">
                     <img src={logo} alt="FinanceBros Logo" className="logo" />
-                    <span className="brand-name">FinanceBros</span>
                 </div>
                 <div className="auth-buttons">
                     <button onClick={() => navigate('/login')}>Login</button>
@@ -77,7 +76,7 @@ function Home() {
                     We bring you real-time market news, current stock evaluations, and a easy to follow overview of the stock markets performance. 
                     Whether you're a beginner or a seasoned trader, FinanceBros empowers you to make confident financial decisions.
                 </p>
-                <button className="get-started-button" onClick={() => navigate('/login')}>
+                <button className="get-started-button" onClick={() => navigate('/signup')}>
                     Get Started Today!
                 </button>
             </div>
