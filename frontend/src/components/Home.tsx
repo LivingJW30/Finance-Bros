@@ -37,6 +37,7 @@ function Home() {
             <div id="mainHeader">
                 <div className="logo-container">
                     <img src={logo} alt="FinanceBros Logo" className="logo" />
+                    <h2 style={{ color: '#e0e0e0', fontSize: '1.25rem',}}>FinanceBros</h2>
                 </div>
                 <div className="auth-buttons">
                     <button onClick={() => navigate('/login')}>Login</button>
