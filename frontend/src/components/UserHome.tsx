@@ -13,7 +13,7 @@ function UserHome() {
   // Fetch the user's favorite stocks from the backend
   const fetchFavorites = async () => {
     try {
-      const response = await fetch(`https://mern-lab.ucfknight.site/api/get-favorites?username=${username}`, {
+      const response = await fetch(`http://localhost:5001/api/get-favorites?username=${username}`, {
         method: 'GET',
         headers: { 'Content-Type': 'application/json' },
       });
@@ -103,13 +103,15 @@ function UserHome() {
             position: 'fixed',
             top: 0,
             left: 0,
-            height: '100vh',
             width: '100vw',
-            backgroundColor: 'rgba(0,0,0,0.7)',
+            height: '100vh', // always fit the screen
+            backgroundColor: 'rgba(0, 0, 0, 0.7)',
             display: 'flex',
-            alignItems: 'center',
             justifyContent: 'center',
+            alignItems: 'center', // center vertically
+            overflow: 'auto', // allow scroll if needed
             zIndex: 200,
+            padding: '2rem 0', // space above and below
           }}
           onClick={() => setSelectedStock(null)}
         >
@@ -120,14 +122,13 @@ function UserHome() {
               padding: '2rem',
               maxWidth: '800px',
               width: '90%',
-              maxHeight: '100vh',
-              boxShadow: '0 0 20px rgba(0,0,0,0.4)',
-              overflow: 'auto',
-	      position: 'relative',
+              maxHeight: '90vh', // allow it to grow, but not overflow
+              overflowY: 'auto', // scrolls internally if needed
+              position: 'relative',
               display: 'flex',
               flexDirection: 'column',
               alignItems: 'center',
-              justifyContent: 'center',
+              justifyContent: 'flex-start', // dont force vertical center
             }}
             onClick={(e) => e.stopPropagation()}
           >
