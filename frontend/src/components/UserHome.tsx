@@ -128,28 +128,57 @@ function UserHome() {
           justifyContent: 'space-between',
         }}
       >
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem',  }}>
           <img src={logo} alt="Finance Bros" style={{ height: '36px', borderRadius: '4px' }} />
-          <h2 style={{ margin: 0, color: '#e0e0e0', fontSize: '1.25rem' }}>My Stocks</h2>
+          <h2 style={{ color: '#e0e0e0', fontSize: '1.25rem' }}>My Stocks</h2>
         </div>
-        <button
-          onClick={() => navigate('/add-stock')}
-          style={{
-            padding: '0.5rem 1rem',
-            fontSize: '1rem',
-            fontWeight: 'bold',
-            color: '#fff',
-            backgroundColor: '#007bff',
-            border: 'none',
-            borderRadius: '8px',
-            cursor: 'pointer',
-            transition: 'background-color 0.3s ease',
-          }}
-          onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#0056b3')}
-          onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#007bff')}
-        >
-          + Add Stock
-        </button>
+
+        <div>
+          <p style={{ color: '#aaa', fontSize: '1rem',marginLeft: '72.5px' }}>Welcome, <strong>{username}</strong></p>
+        </div>
+
+        <div style={{ display: 'flex', gap: '1rem' }}>
+          <button
+            onClick={() => navigate('/add-stock')}
+            style={{
+              padding: '0.5rem 1rem',
+              fontSize: '1rem',
+              fontWeight: 'bold',
+              color: '#fff',
+              backgroundColor: '#007bff',
+              border: 'none',
+              borderRadius: '8px',
+              cursor: 'pointer',
+              transition: 'background-color 0.3s ease',
+            }}
+            onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#0056b3')}
+            onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#007bff')}
+          >
+            + Add Stock
+          </button>
+
+          <button
+            onClick={() => {
+              localStorage.removeItem('user_data');
+              navigate('/login');
+            }}
+            style={{
+              padding: '0.5rem 1rem',
+              fontSize: '1rem',
+              fontWeight: 'bold',
+              color: '#fff',
+              backgroundColor: '#dc3545',
+              border: 'none',
+              borderRadius: '8px',
+              cursor: 'pointer',
+              transition: 'background-color 0.3s ease',
+            }}
+            onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#c82333')}
+            onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#dc3545')}
+          >
+            Log Out
+          </button>
+        </div>
       </div>
 
       {/* Main Content */}

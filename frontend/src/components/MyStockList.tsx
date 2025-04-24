@@ -65,7 +65,7 @@ function MyStockList({ tickers, onSelect }: Props) {
         maxHeight: '80vh',
       }}
     >
-      <h3 style={{ marginTop: 0 }}>My Stocks</h3>
+      <h3 style={{ marginTop: 0, marginLeft: '-10px' }}>My Stocks</h3>
       <table style={{ width: '100%', borderCollapse: 'collapse' }}>
         <thead>
           <tr style={{ borderBottom: '1px solid #444' }}>
