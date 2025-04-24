@@ -74,12 +74,13 @@ function QuotePanel({
       });
 
       const result = await response.json();
-      if (result.success) {
+      if (result.error === 'Ticker Added!') {
         alert(`${ticker} added to your favorites!`);
         setIsFavorite(true);
         setRefreshFavorites(prev => !prev);
         if (onAddStock) onAddStock();
-      } else {
+      } 
+      else {
         alert(result.error || 'Failed to add stock.');
       }
     } catch (error) {
@@ -120,6 +121,8 @@ function QuotePanel({
       </div>
     );
   }
+
+  console.log("🔁 RENDERING QuotePanel | isFavorite:", isFavorite);
 
   return (
     <div
