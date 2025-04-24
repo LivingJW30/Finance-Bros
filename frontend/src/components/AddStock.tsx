@@ -10,6 +10,7 @@ function AddStock() {
     const [searchTerm, setSearchTerm] = useState('');
     const [suggestions, setSuggestions] = useState<{ ticker: string; name: string }[]>([]);
     const navigate = useNavigate(); // React Router's navigate function
+    
 
     useEffect(() => {
         document.body.style.margin = '0';
@@ -97,16 +98,7 @@ function AddStock() {
                 }}
             >
                 <StockList search={searchTerm} onSelect={setSelectedStock} suggestions={suggestions}/>
-                <QuotePanel
-                    ticker={selectedStock}
-                    onAddStock={() => {
-                        if (selectedStock) {
-                            navigate('/home', { state: { newStock: selectedStock } }); // Pass stock to UserHome
-                        } else {
-                            alert('Please select a stock to add.');
-                        }
-                    }}
-                />
+                <QuotePanel ticker={selectedStock} />
             </div>
         </div>
     );
