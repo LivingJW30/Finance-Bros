@@ -120,17 +120,10 @@ function UserHome() {
               padding: '2rem',
               maxWidth: '800px',
               width: '90%',
-<<<<<<< HEAD
               maxHeight: '100vh',
               boxShadow: '0 0 20px rgba(0,0,0,0.4)',
               overflow: 'auto',
 	      position: 'relative',
-=======
-              maxHeight: '90vh',
-              boxShadow: '0 0 20px rgba(0,0,0,0.4)',
-              overflow: 'auto',
-              position: 'relative',
->>>>>>> cd2bf3f9624ae46c7046737caeea2c47dd10f833
               display: 'flex',
               flexDirection: 'column',
               alignItems: 'center',
