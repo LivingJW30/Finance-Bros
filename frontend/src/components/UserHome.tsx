@@ -13,7 +13,7 @@ function UserHome() {
   // Fetch the user's favorite stocks from the backend
   const fetchFavorites = async () => {
     try {
-      const response = await fetch(`http://localhost:5001/api/get-favorites?username=${username}`, {
+      const response = await fetch(`https://mern-lab.ucfknight.site/api/get-favorites?username=${username}`, {
         method: 'GET',
         headers: { 'Content-Type': 'application/json' },
       });
