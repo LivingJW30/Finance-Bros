@@ -76,7 +76,9 @@ function StockList({ search, onSelect, suggestions }: Props) {
 
 
 
-  const displayStocks = search && suggestions.length > 0 ? suggestions : trendingStocks;
+  const displayStocks = search && suggestions.length > 0
+    ? suggestions.filter(stock => snapshots.hasOwnProperty(stock.ticker))
+    : trendingStocks;
 
   return (
     <div
