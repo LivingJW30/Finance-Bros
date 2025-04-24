@@ -55,13 +55,13 @@ function StockChart({ ticker }: { ticker: string | null }) {
         },
     ];
 
-    const openCloseHighs = data.map(d => Math.max(d.open, d.close));
+    const highs = data.map(d => Math.max(d.high, d.low));
     const lows = data.map(d => d.low);
 
-    const highestOpenOrClose = Math.max(...openCloseHighs);
+    const maxHigh = Math.max(...highs);
     const minLow = Math.min(...lows);
 
-    const roundedMax = Math.ceil(highestOpenOrClose / 5) * 5;
+    const roundedMax = Math.ceil(maxHigh / 5) * 5;
     const roundedMin = Math.floor(minLow / 5) * 5;
 
     const options: ApexOptions = {
