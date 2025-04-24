@@ -13,7 +13,7 @@ type QuoteData = {
 };
 
 function QuotePanel({ ticker, onAddStock }: { ticker: string | null, onAddStock?: () => void }) {
-  console.log('📦 QuotePanel received ticker:', ticker);
+  console.log('QuotePanel received ticker:', ticker);
 
   const [data, setData] = useState<QuoteData | null>(null);
   const [isFavorite, setIsFavorite] = useState<boolean>(false);
@@ -22,11 +22,11 @@ function QuotePanel({ ticker, onAddStock }: { ticker: string | null, onAddStock?
   useEffect(() => {
     async function fetchData() {
       if (!ticker || !username) {
-        console.warn('🚫 Missing ticker or username');
+        console.warn('Missing ticker or username');
         return;
       }
 
-      console.log('📡 Fetching data for:', ticker, 'as user:', username);
+      console.log('Fetching data for:', ticker, 'as user:', username);
 
       try {
         const [overviewRes, snapshotRes, favoritesRes] = await Promise.all([
@@ -35,9 +35,9 @@ function QuotePanel({ ticker, onAddStock }: { ticker: string | null, onAddStock?
           fetch(`https://mern-lab.ucfknight.site/api/get-favorites?username=${username}`).then(res => res.json()),
         ]);
 
-        console.log('✅ Overview response:', overviewRes);
-        console.log('✅ Snapshot response:', snapshotRes);
-        console.log('✅ Favorite response:', favoritesRes);
+        console.log('Overview response:', overviewRes);
+        console.log('Snapshot response:', snapshotRes);
+        console.log('Favorite response:', favoritesRes);
 
         if (favoritesRes.success) {
             setIsFavorite(favoritesRes.data.includes(ticker));
@@ -55,10 +55,10 @@ function QuotePanel({ ticker, onAddStock }: { ticker: string | null, onAddStock?
             logo: overviewRes.data.branding.logo,
           });
         } else {
-          console.error('❌ One or both API responses unsuccessful');
+          console.error('One or both API responses unsuccessful');
         }
       } catch (err) {
-        console.error('🔥 Error fetching quote data:', err);
+        console.error('Error fetching quote data:', err);
       }
     }
 
@@ -84,7 +84,7 @@ function QuotePanel({ ticker, onAddStock }: { ticker: string | null, onAddStock?
         alert(result.error || 'Failed to add stock.');
       }
     } catch (error) {
-      console.error('🔥 Error adding stock:', error);
+      console.error('Error adding stock:', error);
       alert('An error occurred while adding the stock.');
     }
   };
@@ -110,7 +110,7 @@ function QuotePanel({ ticker, onAddStock }: { ticker: string | null, onAddStock?
         alert(result.error || 'Failed to remove stock.');
       }
     } catch (error) {
-      console.error('🔥 Error removing stock:', error);
+      console.error('Error removing stock:', error);
       alert('An error occurred while removing the stock.');
     }
   };
