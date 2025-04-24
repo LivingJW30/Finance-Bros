@@ -40,7 +40,7 @@ function TickerBar() {
 
             for (const symbol of tickers) {
                 try {
-                    const res = await fetch(`http://localhost:5001/api/ticker-snapshot?ticker=${symbol}`);
+                    const res = await fetch(`https://mern-lab.ucfknight.site/api/ticker-snapshot?ticker=${symbol}`);
 
                     const data = await res.json();
                     console.log(`[${symbol}] Response:`, data);

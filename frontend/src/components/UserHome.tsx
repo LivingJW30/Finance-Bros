@@ -41,7 +41,7 @@ function UserHome() {
 
     for (const ticker of tickers) {
       try {
-        const res = await fetch(`http://localhost:5001/api/ticker-snapshot?ticker=${ticker}`);
+        const res = await fetch(`https://mern-lab.ucfknight.site/api/ticker-snapshot?ticker=${ticker}`);
         const data = await res.json();
         const lastPrice = data?.data?.price?.close;
         const todaysChange = data?.data?.change?.value ?? 0;
