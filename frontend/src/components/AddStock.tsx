@@ -8,7 +8,7 @@ import logo from '../assets/logo.png';
 function AddStock() {
     const [selectedStock, setSelectedStock] = useState<string | null>(null);
     const [searchTerm, setSearchTerm] = useState('');
-    const [suggestions, setSuggestions] = useState([]);
+    const [suggestions, setSuggestions] = useState<{ ticker: string; name: string }[]>([]);
     const navigate = useNavigate(); // React Router's navigate function
 
     useEffect(() => {
