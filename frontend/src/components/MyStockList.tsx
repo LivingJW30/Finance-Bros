@@ -24,8 +24,9 @@ function MyStockList({ tickers, onSelect }: Props) {
 
       await Promise.all(
         tickers.map(async (ticker) => {
+          console.log("TICKERS ARRAY:"+tickers);
           try {
-            const res = await fetch(`http://localhost:5001/api/ticker-snapshot?ticker=${ticker}`);
+            const res = await fetch(`https://mern-lab.ucfknight.site/api/ticker-snapshot?ticker=${ticker}`);
             const json = await res.json();
 
             if (json.success && json.data) {

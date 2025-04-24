@@ -16,6 +16,7 @@ function QuotePanel({ ticker, onAddStock }: { ticker: string | null, onAddStock?
   console.log('📦 QuotePanel received ticker:', ticker);
 
   const [data, setData] = useState<QuoteData | null>(null);
+  const [isFavorite, setIsFavorite] = useState<boolean>(false);
   const username = JSON.parse(localStorage.getItem('user_data') || '{}').username || 'guest';
 
   useEffect(() => {
@@ -28,13 +29,19 @@ function QuotePanel({ ticker, onAddStock }: { ticker: string | null, onAddStock?
       console.log('📡 Fetching data for:', ticker, 'as user:', username);
 
       try {
-        const [overviewRes, snapshotRes] = await Promise.all([
+        const [overviewRes, snapshotRes, favoritesRes] = await Promise.all([
           fetch(`https://mern-lab.ucfknight.site/api/ticker-overview?ticker=${ticker}&username=${username}`).then((res) => res.json()),
-          fetch(`https://mern-lab.ucfknight.site/api/ticker-snapshot?ticker=${ticker}`).then((res) => res.json())
+          fetch(`https://mern-lab.ucfknight.site/api/ticker-snapshot?ticker=${ticker}`).then((res) => res.json()),
+          fetch(`https://mern-lab.ucfknight.site/api/get-favorites?username=${username}`).then(res => res.json()),
         ]);
 
         console.log('✅ Overview response:', overviewRes);
         console.log('✅ Snapshot response:', snapshotRes);
+        console.log('✅ Favorite response:', favoritesRes);
+
+        if (favoritesRes.success) {
+            setIsFavorite(favoritesRes.data.includes(ticker));
+          }
 
         if (overviewRes.success && snapshotRes.success) {
           setData({
@@ -71,6 +78,7 @@ function QuotePanel({ ticker, onAddStock }: { ticker: string | null, onAddStock?
       const result = await response.json();
       if (result.success) {
         alert(`${ticker} added to your favorites!`);
+	setIsFavorite(true);
         if (onAddStock) onAddStock(); // Notify parent component to refresh the list
       } else {
         alert(result.error || 'Failed to add stock.');
@@ -80,6 +88,35 @@ function QuotePanel({ ticker, onAddStock }: { ticker: string | null, onAddStock?
       alert('An error occurred while adding the stock.');
     }
   };
+
+
+
+  const handleRemoveStock = async () => {
+    if (!ticker) return;
+
+    try {
+      const response = await fetch('https://mern-lab.ucfknight.site/api/remove-favorite', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ticker, username }),
+      });
+
+      const result = await response.json();
+      if (result.error === 'Ticker Removed!') {
+        alert(`${ticker} removed from your favorites.`);
+        setIsFavorite(false);
+        if (onAddStock) onAddStock();
+      } else {
+        alert(result.error || 'Failed to remove stock.');
+      }
+    } catch (error) {
+      console.error('🔥 Error removing stock:', error);
+      alert('An error occurred while removing the stock.');
+    }
+  };
+
+
+
 
   if (!ticker || !data) {
     return (
@@ -105,28 +142,52 @@ function QuotePanel({ ticker, onAddStock }: { ticker: string | null, onAddStock?
         gap: '1rem',
       }}
     >
-      {/* Add Stock Button */}
-      <button
-        onClick={handleAddStock}
-        style={{
-          position: 'absolute',
-          top: '10px',
-          right: '10px',
-          padding: '0.5rem 1rem',
-          fontSize: '0.9rem',
-          fontWeight: 'bold',
-          color: '#fff',
-          backgroundColor: '#28a745',
-          border: 'none',
-          borderRadius: '8px',
-          cursor: 'pointer',
-          transition: 'background-color 0.3s ease',
-        }}
-        onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#218838')}
-        onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#28a745')}
-      >
-        + Add Stock
-      </button>
+      {/* Add/Remove Button */}
+      {isFavorite ? (
+        <button
+          onClick={handleRemoveStock}
+          style={{
+            position: 'absolute',
+            top: '10px',
+            right: '10px',
+            padding: '0.5rem 1rem',
+            fontSize: '0.9rem',
+            fontWeight: 'bold',
+            color: '#fff',
+            backgroundColor: '#dc3545',
+            border: 'none',
+            borderRadius: '8px',
+            cursor: 'pointer',
+            transition: 'background-color 0.3s ease',
+          }}
+          onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#c82333')}
+          onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#dc3545')}
+        >
+          - Remove Stock
+        </button>
+      ) : (
+        <button
+          onClick={handleAddStock}
+          style={{
+            position: 'absolute',
+            top: '10px',
+            right: '10px',
+            padding: '0.5rem 1rem',
+            fontSize: '0.9rem',
+            fontWeight: 'bold',
+            color: '#fff',
+            backgroundColor: '#28a745',
+            border: 'none',
+            borderRadius: '8px',
+            cursor: 'pointer',
+            transition: 'background-color 0.3s ease',
+          }}
+          onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#218838')}
+          onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#28a745')}
+        >
+          + Add Stock
+        </button>
+      )}
 
       {/* Ticker Information */}
       <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
@@ -161,6 +222,3 @@ function QuotePanel({ ticker, onAddStock }: { ticker: string | null, onAddStock?
 }
 
 export default QuotePanel;
-
-
-

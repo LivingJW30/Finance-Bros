@@ -17,10 +17,11 @@ function UserHome() {
         method: 'GET',
         headers: { 'Content-Type': 'application/json' },
       });
-
+      console.log("RESPONSE:"+response);
       const result = await response.json();
-      if (result.success) {
-        setMyStocks(result.data.map((stock: any) => stock.symbol)); // Extract stock symbols
+      console.log("FAV:"+result.favorites);
+      if (!result.error) {
+        setMyStocks(result.favorites); // Extract stock symbols
       } else {
         console.error('Failed to fetch favorites:', result.error);
       }
@@ -119,9 +120,10 @@ function UserHome() {
               padding: '2rem',
               maxWidth: '800px',
               width: '90%',
-              maxHeight: '80vh',
+              maxHeight: '100vh',
               boxShadow: '0 0 20px rgba(0,0,0,0.4)',
               overflow: 'auto',
+	      position: 'relative',
               display: 'flex',
               flexDirection: 'column',
               alignItems: 'center',
