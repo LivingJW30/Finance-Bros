@@ -3,25 +3,25 @@ import { useNavigate } from 'react-router-dom';
 import MyStockList from '../components/MyStockList';
 import QuotePanel from '../components/QuotePanel';
 import logo from '../assets/logo.png';
+import '../assets/Scroll.css';
 
 function UserHome() {
   const [selectedStock, setSelectedStock] = useState<string | null>(null);
-  const [myStocks, setMyStocks] = useState<string[]>([]); // Dynamically fetched list of favorite stocks
+  const [myStocks, setMyStocks] = useState<string[]>([]);
+  const [trendingStocks, setTrendingStocks] = useState<{ symbol: string; price: string; isUp: boolean }[]>([]);
   const navigate = useNavigate();
   const username = JSON.parse(localStorage.getItem('user_data') || '{}').username || 'guest';
 
-  // Fetch the user's favorite stocks from the backend
+  // Fetch the user's favorite stocks
   const fetchFavorites = async () => {
     try {
       const response = await fetch(`https://mern-lab.ucfknight.site/api/get-favorites?username=${username}`, {
         method: 'GET',
         headers: { 'Content-Type': 'application/json' },
       });
-      console.log("RESPONSE:"+response);
       const result = await response.json();
-      console.log("FAV:"+result.favorites);
       if (!result.error) {
-        setMyStocks(result.favorites); // Extract stock symbols
+        setMyStocks(result.favorites);
       } else {
         console.error('Failed to fetch favorites:', result.error);
       }
@@ -30,9 +30,38 @@ function UserHome() {
     }
   };
 
-  // Fetch the favorite stocks when the component mounts
+  // Fetch trending stocks
+  const fetchTrendingStocks = async () => {
+    const tickers = [
+      'AAPL', 'TSLA', 'GOOG', 'AMZN', 'MSFT', 'META', 'NVDA', 'NFLX', 'AMD', 'INTC',
+      'BA', 'WMT', 'DIS', 'JPM', 'V', 'MA', 'KO', 'PEP', 'XOM', 'CVX', 'ADBE', 'CRM',
+      'PYPL', 'ORCL', 'CSCO', 'IBM', 'SHOP', 'UBER', 'LYFT'
+    ];
+    const fetchedStocks: { symbol: string; price: string; isUp: boolean }[] = [];
+
+    for (const ticker of tickers) {
+      try {
+        const res = await fetch(`http://localhost:5001/api/ticker-snapshot?ticker=${ticker}`);
+        const data = await res.json();
+        const lastPrice = data?.data?.price?.close;
+        const todaysChange = data?.data?.change?.value ?? 0;
+
+        fetchedStocks.push({
+          symbol: ticker,
+          price: lastPrice ? `$${lastPrice.toFixed(2)}` : 'N/A',
+          isUp: todaysChange >= 0,
+        });
+      } catch (err) {
+        fetchedStocks.push({ symbol: ticker, price: 'N/A', isUp: true });
+      }
+    }
+
+    setTrendingStocks(fetchedStocks);
+  };
+
   useEffect(() => {
     fetchFavorites();
+    fetchTrendingStocks();
   }, []);
 
   return (
@@ -53,6 +82,38 @@ function UserHome() {
         overflow: 'hidden',
       }}
     >
+      {/* Ticker Bar */}
+      <div
+        style={{
+          backgroundColor: 'black',
+          color: '#e0e0e0',
+          padding: '0.5rem 0',
+          overflow: 'hidden',
+          position: 'relative',
+          whiteSpace: 'nowrap',
+        }}
+      >
+        <div
+          style={{
+            display: 'inline-block',
+            animation: 'scroll 50s linear infinite',
+          }}
+        >
+          {trendingStocks.concat(trendingStocks).map((stock, index) => (
+            <span
+              key={index}
+              style={{
+                marginRight: '2rem',
+                color: stock.isUp ? '#8aff90' : '#f23d4c',
+                fontWeight: 'bold',
+              }}
+            >
+              {stock.symbol}: {stock.price} {stock.isUp ? '▲' : '▼'}
+            </span>
+          ))}
+        </div>
+      </div>
+
       {/* Header */}
       <div
         style={{
@@ -104,14 +165,14 @@ function UserHome() {
             top: 0,
             left: 0,
             width: '100vw',
-            height: '100vh', // always fit the screen
+            height: '100vh',
             backgroundColor: 'rgba(0, 0, 0, 0.7)',
             display: 'flex',
             justifyContent: 'center',
-            alignItems: 'center', // center vertically
-            overflow: 'auto', // allow scroll if needed
+            alignItems: 'center',
+            overflow: 'auto',
             zIndex: 200,
-            padding: '2rem 0', // space above and below
+            padding: '2rem 0',
           }}
           onClick={() => setSelectedStock(null)}
         >
@@ -122,13 +183,13 @@ function UserHome() {
               padding: '2rem',
               maxWidth: '800px',
               width: '90%',
-              maxHeight: '90vh', // allow it to grow, but not overflow
-              overflowY: 'auto', // scrolls internally if needed
+              maxHeight: '90vh',
+              overflowY: 'auto',
               position: 'relative',
               display: 'flex',
               flexDirection: 'column',
               alignItems: 'center',
-              justifyContent: 'flex-start', // dont force vertical center
+              justifyContent: 'flex-start',
             }}
             onClick={(e) => e.stopPropagation()}
           >
@@ -151,7 +212,3 @@ function UserHome() {
 }
 
 export default UserHome;
-
-
-
-
