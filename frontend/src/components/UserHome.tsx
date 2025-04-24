@@ -130,7 +130,7 @@ function UserHome() {
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem',  }}>
           <img src={logo} alt="Finance Bros" style={{ height: '36px', borderRadius: '4px' }} />
-          <h2 style={{ color: '#e0e0e0', fontSize: '1.25rem' }}>My Stocks</h2>
+          <h2 style={{ color: '#e0e0e0', fontSize: '1.25rem' }}>FinanceBros</h2>
         </div>
 
         <div>
