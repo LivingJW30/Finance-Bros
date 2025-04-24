@@ -122,7 +122,7 @@ function QuotePanel({
     );
   }
 
-  console.log("🔁 RENDERING QuotePanel | isFavorite:", isFavorite);
+  console.log("RENDERING QuotePanel | isFavorite:", isFavorite);
 
   return (
     <div
