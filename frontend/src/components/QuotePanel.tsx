@@ -12,36 +12,36 @@ type QuoteData = {
   logo: string;
 };
 
-function QuotePanel({ ticker, onAddStock }: { ticker: string | null, onAddStock?: () => void }) {
-  console.log('QuotePanel received ticker:', ticker);
-
+function QuotePanel({
+  ticker,
+  onAddStock
+}: {
+  ticker: string | null;
+  onAddStock?: () => void;
+}) {
   const [data, setData] = useState<QuoteData | null>(null);
-  const [isFavorite, setIsFavorite] = useState<boolean>(false);
+  const [isFavorite, setIsFavorite] = useState(false);
+  const [refreshFavorites, setRefreshFavorites] = useState(false);
   const username = JSON.parse(localStorage.getItem('user_data') || '{}').username || 'guest';
 
   useEffect(() => {
     async function fetchData() {
-      if (!ticker || !username) {
-        console.warn('Missing ticker or username');
-        return;
-      }
-
-      console.log('Fetching data for:', ticker, 'as user:', username);
+      if (!ticker || !username) return;
 
       try {
         const [overviewRes, snapshotRes, favoritesRes] = await Promise.all([
-          fetch(`https://mern-lab.ucfknight.site/api/ticker-overview?ticker=${ticker}&username=${username}`).then((res) => res.json()),
-          fetch(`https://mern-lab.ucfknight.site/api/ticker-snapshot?ticker=${ticker}`).then((res) => res.json()),
+          fetch(`https://mern-lab.ucfknight.site/api/ticker-overview?ticker=${ticker}&username=${username}`).then(res => res.json()),
+          fetch(`https://mern-lab.ucfknight.site/api/ticker-snapshot?ticker=${ticker}`).then(res => res.json()),
           fetch(`https://mern-lab.ucfknight.site/api/get-favorites?username=${username}`).then(res => res.json()),
         ]);
 
-        console.log('Overview response:', overviewRes);
-        console.log('Snapshot response:', snapshotRes);
-        console.log('Favorite response:', favoritesRes);
-
-        if (favoritesRes.success) {
-            setIsFavorite(favoritesRes.data.includes(ticker));
-          }
+        if (Array.isArray(favoritesRes.favorites)) {
+          const upperFavorites = favoritesRes.favorites.map((t: string) => t.trim().toUpperCase());
+          const currentTicker = ticker.trim().toUpperCase();
+          setIsFavorite(upperFavorites.includes(currentTicker));
+        } else {
+          setIsFavorite(false);
+        }
 
         if (overviewRes.success && snapshotRes.success) {
           setData({
@@ -54,8 +54,6 @@ function QuotePanel({ ticker, onAddStock }: { ticker: string | null, onAddStock?
             changeValue: snapshotRes.data.change.value,
             logo: overviewRes.data.branding.logo,
           });
-        } else {
-          console.error('One or both API responses unsuccessful');
         }
       } catch (err) {
         console.error('Error fetching quote data:', err);
@@ -63,7 +61,7 @@ function QuotePanel({ ticker, onAddStock }: { ticker: string | null, onAddStock?
     }
 
     fetchData();
-  }, [ticker, username]);
+  }, [ticker, refreshFavorites]);
 
   const handleAddStock = async () => {
     if (!ticker) return;
@@ -78,8 +76,9 @@ function QuotePanel({ ticker, onAddStock }: { ticker: string | null, onAddStock?
       const result = await response.json();
       if (result.success) {
         alert(`${ticker} added to your favorites!`);
-	setIsFavorite(true);
-        if (onAddStock) onAddStock(); // Notify parent component to refresh the list
+        setIsFavorite(true);
+        setRefreshFavorites(prev => !prev);
+        if (onAddStock) onAddStock();
       } else {
         alert(result.error || 'Failed to add stock.');
       }
@@ -88,8 +87,6 @@ function QuotePanel({ ticker, onAddStock }: { ticker: string | null, onAddStock?
       alert('An error occurred while adding the stock.');
     }
   };
-
-
 
   const handleRemoveStock = async () => {
     if (!ticker) return;
@@ -105,7 +102,8 @@ function QuotePanel({ ticker, onAddStock }: { ticker: string | null, onAddStock?
       if (result.error === 'Ticker Removed!') {
         alert(`${ticker} removed from your favorites.`);
         setIsFavorite(false);
-        if (onAddStock) onAddStock();
+        setRefreshFavorites(prev => !prev);
+        if (onAddStock) onAddStock(); // reuse onAddStock for both actions
       } else {
         alert(result.error || 'Failed to remove stock.');
       }
@@ -114,9 +112,6 @@ function QuotePanel({ ticker, onAddStock }: { ticker: string | null, onAddStock?
       alert('An error occurred while removing the stock.');
     }
   };
-
-
-
 
   if (!ticker || !data) {
     return (
@@ -142,7 +137,6 @@ function QuotePanel({ ticker, onAddStock }: { ticker: string | null, onAddStock?
         gap: '1rem',
       }}
     >
-      {/* Add/Remove Button */}
       {isFavorite ? (
         <button
           onClick={handleRemoveStock}
@@ -189,7 +183,6 @@ function QuotePanel({ ticker, onAddStock }: { ticker: string | null, onAddStock?
         </button>
       )}
 
-      {/* Ticker Information */}
       <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
         {data.logo && (
           <img src={data.logo} alt="logo" style={{ height: '40px', borderRadius: '4px' }} />
@@ -214,7 +207,7 @@ function QuotePanel({ ticker, onAddStock }: { ticker: string | null, onAddStock?
         </p>
       </div>
 
-      <div style={{ flexGrow: 1, display: 'flex', }}>
+      <div style={{ flexGrow: 1, display: 'flex' }}>
         <StockGraph ticker={ticker} />
       </div>
     </div>

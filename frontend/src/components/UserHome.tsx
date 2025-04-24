@@ -3,48 +3,36 @@ import { useNavigate } from 'react-router-dom';
 import MyStockList from '../components/MyStockList';
 import QuotePanel from '../components/QuotePanel';
 import logo from '../assets/logo.png';
-import '../assets/Scroll.css';
 
 function UserHome() {
   const [selectedStock, setSelectedStock] = useState<string | null>(null);
-  const [trendingStocks, setTrendingStocks] = useState<{ symbol: string; price: string; isUp: boolean }[]>([]);
+  const [myStocks, setMyStocks] = useState<string[]>([]); // Dynamically fetched list of favorite stocks
   const navigate = useNavigate();
+  const username = JSON.parse(localStorage.getItem('user_data') || '{}').username || 'guest';
 
-  useEffect(() => {
-    async function fetchTrendingStocks() {
-      const tickers = [
-        'AAPL', 'TSLA', 'GOOG', 'AMZN', 'MSFT', 'META', 'NVDA', 'NFLX', 'AMD', 'INTC',
-        'BA', 'WMT', 'DIS', 'JPM', 'V', 'MA', 'KO', 'PEP', 'XOM', 'CVX', 'ADBE', 'CRM',
-        'PYPL', 'ORCL', 'CSCO', 'IBM', 'SHOP', 'UBER', 'LYFT'
-      ]; // Added more tickers
-      const fetchedStocks: { symbol: string; price: string; isUp: boolean }[] = [];
-
-      for (const ticker of tickers) {
-        try {
-          const res = await fetch(`http://localhost:5001/api/ticker-snapshot?ticker=${ticker}`);
-          const data = await res.json();
-
-          const lastPrice = data?.data?.price?.close;
-          const todaysChange = data?.data?.change?.value ?? 0;
-
-          fetchedStocks.push({
-            symbol: ticker,
-            price: lastPrice ? `$${lastPrice.toFixed(2)}` : 'N/A',
-            isUp: todaysChange >= 0,
-          });
-        } catch (err) {
-          fetchedStocks.push({
-            symbol: ticker,
-            price: 'N/A',
-            isUp: true,
-          });
-        }
+  // Fetch the user's favorite stocks from the backend
+  const fetchFavorites = async () => {
+    try {
+      const response = await fetch(`https://mern-lab.ucfknight.site/api/get-favorites?username=${username}`, {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' },
+      });
+      console.log("RESPONSE:"+response);
+      const result = await response.json();
+      console.log("FAV:"+result.favorites);
+      if (!result.error) {
+        setMyStocks(result.favorites); // Extract stock symbols
+      } else {
+        console.error('Failed to fetch favorites:', result.error);
       }
-
-      setTrendingStocks(fetchedStocks);
+    } catch (error) {
+      console.error('Error fetching favorites:', error);
     }
+  };
 
-    fetchTrendingStocks();
+  // Fetch the favorite stocks when the component mounts
+  useEffect(() => {
+    fetchFavorites();
   }, []);
 
   return (
@@ -65,38 +53,6 @@ function UserHome() {
         overflow: 'hidden',
       }}
     >
-      {/* Ticker Bar */}
-      <div
-        style={{
-          backgroundColor: '#2a2a2a',
-          color: '#e0e0e0',
-          padding: '0.5rem 0',
-          overflow: 'hidden',
-          position: 'relative',
-          whiteSpace: 'nowrap',
-        }}
-      >
-        <div
-          style={{
-            display: 'inline-block',
-            animation: 'scroll 50s linear infinite', // Adjusted duration for smoother scrolling
-          }}
-        >
-          {trendingStocks.concat(trendingStocks).map((stock, index) => (
-            <span
-              key={index}
-              style={{
-                marginRight: '2rem',
-                color: stock.isUp ? '#8aff90' : '#f23d4c',
-                fontWeight: 'bold',
-              }}
-            >
-              {stock.symbol}: {stock.price} {stock.isUp ? '▲' : '▼'}
-            </span>
-          ))}
-        </div>
-      </div>
-
       {/* Header */}
       <div
         style={{
@@ -137,10 +93,7 @@ function UserHome() {
 
       {/* Main Content */}
       <div style={{ padding: '2rem', flexGrow: 1, overflow: 'auto' }}>
-        <MyStockList
-          tickers={['AAPL', 'TSLA', 'GOOG']} // Replace later with API-fetched tickers
-          onSelect={setSelectedStock}
-        />
+        <MyStockList tickers={myStocks} onSelect={setSelectedStock} />
       </div>
 
       {/* Modal for Quote Panel */}
@@ -150,13 +103,15 @@ function UserHome() {
             position: 'fixed',
             top: 0,
             left: 0,
-            height: '100vh',
             width: '100vw',
-            backgroundColor: 'rgba(0,0,0,0.7)',
+            height: '100vh', // always fit the screen
+            backgroundColor: 'rgba(0, 0, 0, 0.7)',
             display: 'flex',
-            alignItems: 'center',
             justifyContent: 'center',
+            alignItems: 'center', // center vertically
+            overflow: 'auto', // allow scroll if needed
             zIndex: 200,
+            padding: '2rem 0', // space above and below
           }}
           onClick={() => setSelectedStock(null)}
         >
@@ -167,13 +122,13 @@ function UserHome() {
               padding: '2rem',
               maxWidth: '800px',
               width: '90%',
-              maxHeight: '80vh',
-              boxShadow: '0 0 20px rgba(0,0,0,0.4)',
-              overflow: 'auto',
+              maxHeight: '90vh', // allow it to grow, but not overflow
+              overflowY: 'auto', // scrolls internally if needed
+              position: 'relative',
               display: 'flex',
               flexDirection: 'column',
               alignItems: 'center',
-              justifyContent: 'center',
+              justifyContent: 'flex-start', // dont force vertical center
             }}
             onClick={(e) => e.stopPropagation()}
           >
@@ -186,7 +141,7 @@ function UserHome() {
                 justifyContent: 'center',
               }}
             >
-              <QuotePanel ticker={selectedStock} />
+              <QuotePanel ticker={selectedStock} onAddStock={fetchFavorites} />
             </div>
           </div>
         </div>

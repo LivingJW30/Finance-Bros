@@ -99,13 +99,8 @@ function AddStock() {
                 <StockList search={searchTerm} onSelect={setSelectedStock} suggestions={suggestions}/>
                 <QuotePanel
                     ticker={selectedStock}
-                    onAddStock={() => {
-                        if (selectedStock) {
-                            navigate('/home', { state: { newStock: selectedStock } }); // Pass stock to UserHome
-                        } else {
-                            alert('Please select a stock to add.');
-                        }
-                    }}
+                    onAddStock={() => {}
+                    }
                 />
             </div>
         </div>
