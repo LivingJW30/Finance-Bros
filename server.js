@@ -101,7 +101,7 @@ app.get('/api/news', async (req, res, next) => { //Endpoint used to fetch news a
     try {
         news = await rest.reference.tickerNews({
             order: "desc",
-            limit: 19, //Can modify if needed (limit is 1000)
+            limit: 30, //Can modify if needed (limit is 1000)
             sort: "published_utc"
         });
 
