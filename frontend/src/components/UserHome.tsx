@@ -134,7 +134,7 @@ function UserHome() {
         </div>
 
         <div>
-          <p style={{ color: '#aaa', fontSize: '1rem',marginLeft: '72.5px' }}>Welcome, <strong>{username}</strong></p>
+          <p style={{ color: '#aaa', fontSize: '1rem',marginLeft: '61px' }}>Welcome, <strong>{username}</strong></p>
         </div>
 
         <div style={{ display: 'flex', gap: '1rem' }}>
