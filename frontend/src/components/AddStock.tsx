@@ -57,13 +57,32 @@ function AddStock() {
                         alt="Finance Bros"
                         style={{ height: '36px', borderRadius: '4px' }}
                     />
-                    <h2 style={{ margin: 0, color: '#e0e0e0', fontSize: '1.25rem' }}>Add Stock</h2>
+                    {/* Breadcrumb Navigation */}
+                    <h2
+                        style={{
+                            margin: 0,
+                            color: '#e0e0e0',
+                            fontSize: '1.5rem', // Increased font size
+                            whiteSpace: 'nowrap', // Prevent wrapping to a new line
+                        }}
+                    >
+                        <span
+                            style={{
+                                cursor: 'pointer',
+                                textDecoration: 'underline',
+                                color: '#007bff',
+                            }}
+                            onClick={() => navigate('/home')} // Navigate back to UserHome
+                        >
+                            My Stocks
+                        </span>{' '}
+                        → Add Stock
+                    </h2>
                 </div>
 
                 {/* Right: Search Bar */}
                 <SearchBar value={searchTerm} onChange={setSearchTerm} onSelect={setSelectedStock} setSuggestions={setSuggestions} />
             </div>
-
 
             {/* Main content*/}
             <div
@@ -76,7 +95,7 @@ function AddStock() {
                     overflow: 'auto',
                 }}
             >
-                <StockList search={searchTerm} onSelect={setSelectedStock} suggestions={suggestions}/>
+                <StockList search={searchTerm} onSelect={setSelectedStock} suggestions={suggestions} />
                 <QuotePanel
                     ticker={selectedStock}
                     onAddStock={() => {
