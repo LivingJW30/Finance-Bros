@@ -8,5 +8,12 @@ FinanceBros is your go-to platform for tracking, learning, and thriving in the w
 - Database/server admin - Jack Livingston
 - API - Daniel Kinahan, Adam Wheeler
 - Frontend - Connor Northington, Kameron Hyles
+
+## What did we use?
+- MERN stack
+- PM2 for live hosting
+- AWS lightsail (our server is no longer up)
+- Git/Github
+- Postman
  
 ## [See how you can track your wealth here](https://youtube.com/shorts/o1QUyimeOUY?feature=share)
