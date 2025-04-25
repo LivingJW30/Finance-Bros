@@ -9,4 +9,4 @@ Database/server admin - Jack Livingston
 API - Daniel Kinahan, Adam Wheeler
 Frontend - Connor Northington, Kameron Hyles
  
-[See how you can track your wealth here](https://youtube.com/shorts/o1QUyimeOUY?feature=share)
+## [See how you can track your wealth here](https://youtube.com/shorts/o1QUyimeOUY?feature=share)
